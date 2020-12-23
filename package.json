@@ -1,0 +1,23 @@
+{
+  "name": "kekstagram",
+  "version": "14.0.0",
+  "description": "Личный проект «Кекстаграм» от HTML Academy",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeah-not/kekstagram.git"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yeah-not/kekstagram/issues"
+  },
+  "homepage": "https://github.com/yeah-not/kekstagram#readme",
+  "scripts": {
+    "test": "eslint js/"
+  },
+  "devDependencies": {
+    "eslint": "^7.16.0",
+    "eslint-config-htmlacademy": "^0.6.0"
+  }
+}

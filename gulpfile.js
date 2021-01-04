@@ -8,6 +8,7 @@ const gulpif = require('gulp-if');
 
 const ghpages = require('gh-pages');
 const browserSync = require('browser-sync').create();
+const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
 const terser = require('gulp-terser');
 
@@ -19,12 +20,19 @@ function clean() {
   return del('build');
 }
 
+function html() {
+  return src('source/*.html')
+    .pipe(dest('build'))
+    .pipe(browserSync.stream());
+}
+
 function styles() {
   return src('source/css/*.css', {sourcemaps: isDev})
     .pipe(gulpif(isDev, dest('build/css')))
     .pipe(plumber())
+    .pipe(concat('styles.css'))
     .pipe(cleanCSS({level: 2}))
-    .pipe(rename({suffix: '.min'}))
+    .pipe(rename('styles.min.css'))
     .pipe(dest('build/css', {sourcemaps: isDev}))
     .pipe(browserSync.stream());
 }
@@ -41,7 +49,7 @@ function scripts() {
 
 function images() {
   return src([
-      'source/img/*.{jpg,png,gif}',
+      'source/img/*.{jpg,png,gif,svg}',
       'source/photos/*.{jpg,png,gif}',
       'source/*.ico'
     ], {
@@ -50,10 +58,9 @@ function images() {
     .pipe(dest('build'));
 }
 
-function html() {
-  return src('source/*.html')
-    .pipe(dest('build'))
-    .pipe(browserSync.stream());
+function fonts() {
+  return src('source/fonts/*.{woff,woff2}')
+    .pipe(dest('build/fonts'));
 }
 
 function server() {
@@ -80,7 +87,7 @@ function deploy(done) {
 
 // Tasks
 // ---------------
-let build = series(clean, parallel(styles, scripts, images, html));
+let build = series(clean, parallel(html, styles, scripts, images, fonts));
 
 exports.build = series(build, deploy);
 exports.watch = server;

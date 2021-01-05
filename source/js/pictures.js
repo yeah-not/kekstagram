@@ -23,34 +23,34 @@ var DESCRIPTIONS = [
 
 var getRandomEl = function(array) {
   return array[Math.floor(Math.random() * array.length)];
-}
+};
 
 var getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
 var shuffle = function(array) {
-	var j, temp;
+  var j; var temp;
 
-	for(var i = array.length - 1; i > 0; i--){
-		j = Math.floor(Math.random()*(i + 1));
-		temp = array[j];
-		array[j] = array[i];
-		array[i] = temp;
-	}
+  for (var i = array.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = array[j];
+    array[j] = array[i];
+    array[i] = temp;
+  }
 
-	return array;
-}
+  return array;
+};
 
 var getComments = function(num) {
   var comments = [];
 
   for (var i = 0; i < num; i++) {
-    comments[i] = getRandomInt(0, 1) ?  getRandomEl(COMMENTS) : getRandomEl(COMMENTS) + ' ' + getRandomEl(COMMENTS);
+    comments[i] = getRandomInt(0, 1) ? getRandomEl(COMMENTS) : getRandomEl(COMMENTS) + ' ' + getRandomEl(COMMENTS);
   }
 
   return comments;
-}
+};
 
 var getPictures = function(num) {
   var pictures = [];
@@ -65,7 +65,7 @@ var getPictures = function(num) {
   }
 
   return shuffle(pictures);
-}
+};
 
 var renderPicture = function(picture) {
   var pictureElem = pictureTemplate.cloneNode(true);
@@ -75,7 +75,7 @@ var renderPicture = function(picture) {
   pictureElem.querySelector('.picture__stat--comments').textContent = picture.comments.length;
 
   return pictureElem;
-}
+};
 
 var renderPictures = function(pictures) {
   var fragment = document.createDocumentFragment();
@@ -85,7 +85,7 @@ var renderPictures = function(pictures) {
   }
 
   return fragment;
-}
+};
 
 var picturesContainer = document.querySelector('.pictures');
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');

@@ -14,7 +14,8 @@
   },
   "homepage": "https://github.com/yeah-not/kekstagram#readme",
   "scripts": {
-    "test": "eslint js/",
+    "test": "eslint source/js/",
+    "fix": "eslint --fix source/js/",
     "build": "gulp build",
     "start": "gulp build --dev && gulp watch"
   },

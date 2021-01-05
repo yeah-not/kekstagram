@@ -29,6 +29,19 @@ var getRandomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+var shuffle = function(array) {
+	var j, temp;
+
+	for(var i = array.length - 1; i > 0; i--){
+		j = Math.floor(Math.random()*(i + 1));
+		temp = array[j];
+		array[j] = array[i];
+		array[i] = temp;
+	}
+
+	return array;
+}
+
 var getComments = function(num) {
   var comments = [];
 
@@ -44,14 +57,14 @@ var getPictures = function(num) {
 
   for (var i = 0; i < num; i++) {
     pictures[i] = {
-      url: 'photos/' + getRandomInt(1, PICTURES_NUM) + '.jpg',
+      url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
       comments: getComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
       description: getRandomEl(DESCRIPTIONS),
     };
   }
 
-  return pictures;
+  return shuffle(pictures);
 }
 
 var renderPicture = function(picture) {

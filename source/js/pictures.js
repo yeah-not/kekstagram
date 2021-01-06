@@ -1,8 +1,9 @@
 'use strict';
 
+// --- Константы ---
 var PICTURES_NUM = 25;
 var LIKES_NUM = [15, 200];
-var COMMENTS_NUM = [3, 50];
+var COMMENTS_NUM = [1, 20];
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -20,7 +21,7 @@ var DESCRIPTIONS = [
   'Вот это тачка!',
 ];
 
-
+// --- Функции ---
 var getRandomEl = function(array) {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -87,8 +88,37 @@ var renderPictures = function(pictures) {
   return fragment;
 };
 
+// --- Старт ---
 var picturesContainer = document.querySelector('.pictures');
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
 
 var pictures = getPictures(PICTURES_NUM);
 picturesContainer.appendChild(renderPictures(pictures));
+
+var pictureModal = document.querySelector('.big-picture');
+pictureModal.classList.remove('hidden');
+
+pictureModal.querySelector('.big-picture__img img').src = pictures[0].url;
+pictureModal.querySelector('.likes-count').textContent = pictures[0].likes;
+pictureModal.querySelector('.comments-count').textContent = pictures[0].comments.length;
+pictureModal.querySelector('.social__caption').textContent = pictures[0].description;
+pictureModal.querySelector('.social__comment-count').classList.add('visually-hidden');
+pictureModal.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
+
+var commentsList = document.querySelector('.social__comments');
+var commentTemplate = document.querySelector('#social-comment').content.querySelector('.social__comment');
+var avatarSrc = commentTemplate.querySelector('.social__picture').src;
+var comments = pictures[0].comments;
+
+var fragment = document.createDocumentFragment();
+
+for (var i = 0; i < comments.length; i++) {
+  var commentElem = commentTemplate.cloneNode(true);
+
+  commentElem.querySelector('.social__picture').src = avatarSrc.replace('1', getRandomInt(1, 6));
+  commentElem.querySelector('.social__text').textContent = comments[i];
+
+  fragment.appendChild(commentElem);
+}
+
+commentsList.appendChild(fragment);

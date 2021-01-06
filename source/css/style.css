@@ -914,7 +914,7 @@ main {
       -ms-flex-direction: column;
           flex-direction: column;
 
-  min-width: 600px;
+  width: 600px;
 
   color: #000000;
   font-family: "Open Sans", "Arial", sans-serif;
@@ -1007,6 +1007,7 @@ main {
 
 .social__comment {
   padding-left: 65px;
+  padding-right: 15px;
   padding-bottom: 20px;
 }
 

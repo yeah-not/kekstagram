@@ -4,6 +4,7 @@
 var PICTURES_NUM = 25;
 var LIKES_NUM = [15, 200];
 var COMMENTS_NUM = [1, 20];
+var AVATARS_NUM = [1, 6];
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -43,7 +44,7 @@ var shuffle = function(array) {
   return array;
 };
 
-var getComments = function(num) {
+var getRndComments = function(num) {
   var comments = [];
 
   for (var i = 0; i < num; i++) {
@@ -53,14 +54,14 @@ var getComments = function(num) {
   return comments;
 };
 
-var getPictures = function(num) {
+var getRndPictures = function(num) {
   var pictures = [];
 
   for (var i = 0; i < num; i++) {
     pictures[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
-      comments: getComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
+      comments: getRndComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
       description: getRandomEl(DESCRIPTIONS),
     };
   }
@@ -88,37 +89,43 @@ var renderPictures = function(pictures) {
   return fragment;
 };
 
+var renderComments = function(comments) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < comments.length; i++) {
+    var commentElem = commentTemplate.cloneNode(true);
+    var avatarUrl = commentElem.querySelector('.social__picture').src;
+
+    commentElem.querySelector('.social__picture').src = avatarUrl.replace(AVATARS_NUM[0], getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]));
+    commentElem.querySelector('.social__text').textContent = comments[i];
+
+    fragment.appendChild(commentElem);
+  }
+
+  return fragment;
+};
+
+var showPictureModal = function() {
+  pictureModal.classList.remove('hidden');
+
+  pictureModal.querySelector('.big-picture__img img').src = pictures[0].url;
+  pictureModal.querySelector('.likes-count').textContent = pictures[0].likes;
+  pictureModal.querySelector('.comments-count').textContent = pictures[0].comments.length;
+  pictureModal.querySelector('.social__caption').textContent = pictures[0].description;
+  pictureModal.querySelector('.social__comment-count').classList.add('visually-hidden');
+  pictureModal.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
+};
+
 // --- Старт ---
 var picturesContainer = document.querySelector('.pictures');
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
 
-var pictures = getPictures(PICTURES_NUM);
+var pictures = getRndPictures(PICTURES_NUM);
 picturesContainer.appendChild(renderPictures(pictures));
 
 var pictureModal = document.querySelector('.big-picture');
-pictureModal.classList.remove('hidden');
-
-pictureModal.querySelector('.big-picture__img img').src = pictures[0].url;
-pictureModal.querySelector('.likes-count').textContent = pictures[0].likes;
-pictureModal.querySelector('.comments-count').textContent = pictures[0].comments.length;
-pictureModal.querySelector('.social__caption').textContent = pictures[0].description;
-pictureModal.querySelector('.social__comment-count').classList.add('visually-hidden');
-pictureModal.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
+showPictureModal();
 
 var commentsList = document.querySelector('.social__comments');
 var commentTemplate = document.querySelector('#social-comment').content.querySelector('.social__comment');
-var avatarSrc = commentTemplate.querySelector('.social__picture').src;
-var comments = pictures[0].comments;
-
-var fragment = document.createDocumentFragment();
-
-for (var i = 0; i < comments.length; i++) {
-  var commentElem = commentTemplate.cloneNode(true);
-
-  commentElem.querySelector('.social__picture').src = avatarSrc.replace('1', getRandomInt(1, 6));
-  commentElem.querySelector('.social__text').textContent = comments[i];
-
-  fragment.appendChild(commentElem);
-}
-
-commentsList.appendChild(fragment);
+commentsList.appendChild(renderComments(pictures[0].comments));

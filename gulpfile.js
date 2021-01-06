@@ -38,14 +38,24 @@ function styles() {
 }
 
 function scripts() {
-  return src('source/js/**/*.js', {sourcemaps: isDev})
+  return src('source/js/**/*.js', {sourcemaps: false})
     .pipe(gulpif(isDev, dest('build/js')))
     .pipe(plumber())
-    .pipe(terser())
+    // .pipe(terser())
     .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/js', {sourcemaps: isDev}))
+    .pipe(dest('build/js', {sourcemaps: false}))
     .pipe(browserSync.stream());
 }
+//
+// function scripts() {
+//   return src('source/js/**/*.js', {sourcemaps: isDev})
+//     .pipe(gulpif(isDev, dest('build/js')))
+//     .pipe(plumber())
+//     .pipe(terser())
+//     .pipe(rename({suffix: '.min'}))
+//     .pipe(dest('build/js', {sourcemaps: isDev}))
+//     .pipe(browserSync.stream());
+// }
 
 function images() {
   return src([

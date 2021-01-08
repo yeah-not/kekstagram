@@ -1,6 +1,7 @@
 'use strict';
 
-// --- Константы ---
+// Константы
+// --------------
 var PICTURES_NUM = 25;
 var LIKES_NUM = [15, 200];
 var COMMENTS_NUM = [1, 20];
@@ -22,7 +23,8 @@ var DESCRIPTIONS = [
   'Вот это тачка!',
 ];
 
-// --- Функции ---
+// Утилиты
+// --------------
 var getRandomEl = function(array) {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -44,7 +46,34 @@ var shuffle = function(array) {
   return array;
 };
 
-var getRndComments = function(num) {
+var renderFragment = function(data, renderItem) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < data.length; i++) {
+    fragment.appendChild(renderItem(data[i]));
+  }
+
+  return fragment;
+}
+
+// Функции
+// --------------
+var generatePictures = function(num) {
+  var pictures = [];
+
+  for (var i = 0; i < num; i++) {
+    pictures[i] = {
+      url: 'photos/' + (i + 1) + '.jpg',
+      likes: getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
+      comments: generateComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
+      description: getRandomEl(DESCRIPTIONS),
+    };
+  }
+
+  return shuffle(pictures);
+};
+
+var generateComments = function(num) {
   var comments = [];
 
   for (var i = 0; i < num; i++) {
@@ -54,78 +83,59 @@ var getRndComments = function(num) {
   return comments;
 };
 
-var getRndPictures = function(num) {
-  var pictures = [];
+var generateAvatarSrc = function() {
+  var avatarInt = getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]);
+  var avatarSrc = avatarUrl.replace(AVATARS_NUM[0], avatarInt);
 
-  for (var i = 0; i < num; i++) {
-    pictures[i] = {
-      url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
-      comments: getRndComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
-      description: getRandomEl(DESCRIPTIONS),
-    };
-  }
+  return avatarSrc;
+}
 
-  return shuffle(pictures);
+var renderPicture = function(data) {
+  var picture = pictureTemplate.cloneNode(true);
+
+  picture.querySelector('.picture__img').src = data.url;
+  picture.querySelector('.picture__stat--likes').textContent = data.likes;
+  picture.querySelector('.picture__stat--comments').textContent = data.comments.length;
+
+  return picture;
 };
 
-var renderPicture = function(picture) {
-  var pictureElem = pictureTemplate.cloneNode(true);
+var renderComment = function(text) {
+  var comment = commentTemplate.cloneNode(true);
 
-  pictureElem.querySelector('.picture__img').src = picture.url;
-  pictureElem.querySelector('.picture__stat--likes').textContent = picture.likes;
-  pictureElem.querySelector('.picture__stat--comments').textContent = picture.comments.length;
+  comment.querySelector('.social__picture').src = generateAvatarSrc();
+  comment.querySelector('.social__text').textContent = text;
 
-  return pictureElem;
+  return comment;
+}
+
+var fillBigPicture = function(data) {
+  bigPicture.querySelector('.big-picture__img img').src = data.url;
+  bigPicture.querySelector('.likes-count').textContent = data.likes;
+  bigPicture.querySelector('.comments-count').textContent = data.comments.length;
+  bigPicture.querySelector('.social__caption').textContent = data.description;
+  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+  bigPicture.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
+
+  commentsList.appendChild(renderFragment(data.comments, renderComment));
 };
 
-var renderPictures = function(pictures) {
-  var fragment = document.createDocumentFragment();
+// Шаблоны
+// --------------
+var template = document.querySelector('#main-template').content;
+var pictureTemplate = template.querySelector('.picture__link');
+var commentTemplate = template.querySelector('.social__comment');
+var avatarUrl = commentTemplate.querySelector('.social__picture').src;
 
-  for (var i = 0; i < pictures.length; i++) {
-    fragment.appendChild(renderPicture(pictures[i]));
-  }
+// Старт
+// --------------
+var picturesData = generatePictures(PICTURES_NUM);
+var pictures = document.querySelector('.pictures');
 
-  return fragment;
-};
+pictures.appendChild(renderFragment(picturesData, renderPicture));
 
-var renderComments = function(comments) {
-  var fragment = document.createDocumentFragment();
+var bigPicture = document.querySelector('.big-picture');
+var commentsList = bigPicture.querySelector('.social__comments');
 
-  for (var i = 0; i < comments.length; i++) {
-    var commentElem = commentTemplate.cloneNode(true);
-    var avatarUrl = commentElem.querySelector('.social__picture').src;
-
-    commentElem.querySelector('.social__picture').src = avatarUrl.replace(AVATARS_NUM[0], getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]));
-    commentElem.querySelector('.social__text').textContent = comments[i];
-
-    fragment.appendChild(commentElem);
-  }
-
-  return fragment;
-};
-
-var showPictureModal = function() {
-  pictureModal.classList.remove('hidden');
-
-  pictureModal.querySelector('.big-picture__img img').src = pictures[0].url;
-  pictureModal.querySelector('.likes-count').textContent = pictures[0].likes;
-  pictureModal.querySelector('.comments-count').textContent = pictures[0].comments.length;
-  pictureModal.querySelector('.social__caption').textContent = pictures[0].description;
-  pictureModal.querySelector('.social__comment-count').classList.add('visually-hidden');
-  pictureModal.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
-};
-
-// --- Старт ---
-var picturesContainer = document.querySelector('.pictures');
-var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
-
-var pictures = getRndPictures(PICTURES_NUM);
-picturesContainer.appendChild(renderPictures(pictures));
-
-var pictureModal = document.querySelector('.big-picture');
-showPictureModal();
-
-var commentsList = document.querySelector('.social__comments');
-var commentTemplate = document.querySelector('#social-comment').content.querySelector('.social__comment');
-commentsList.appendChild(renderComments(pictures[0].comments));
+fillBigPicture(picturesData[0]);
+bigPicture.classList.remove('hidden');

@@ -54,7 +54,7 @@ var renderFragment = function(data, renderItem) {
   }
 
   return fragment;
-}
+};
 
 // Функции
 // --------------
@@ -88,7 +88,7 @@ var generateAvatarSrc = function() {
   var avatarSrc = avatarUrl.replace(AVATARS_NUM[0], avatarInt);
 
   return avatarSrc;
-}
+};
 
 var renderPicture = function(data) {
   var picture = pictureTemplate.cloneNode(true);
@@ -107,7 +107,7 @@ var renderComment = function(text) {
   comment.querySelector('.social__text').textContent = text;
 
   return comment;
-}
+};
 
 var fillBigPicture = function(data) {
   bigPicture.querySelector('.big-picture__img img').src = data.url;
@@ -119,6 +119,28 @@ var fillBigPicture = function(data) {
 
   commentsList.appendChild(renderFragment(data.comments, renderComment));
 };
+
+var openUploadPopup = function() {
+  document.addEventListener('keydown', onUploadPopupEscPress);
+  uploadPopup.classList.remove('hidden');
+};
+
+var closeUploadPopup = function() {
+  uploadPopup.classList.add('hidden');
+  uploadForm.reset();
+  document.removeEventListener('keydown', onUploadPopupEscPress);
+};
+
+// Обработчики
+// --------------
+var onUploadPopupEscPress = function(evt) {
+  if (evt.code === 'Escape'
+    && evt.target !== uploadHashtags
+    && evt.target !== uploadDescription) {
+    closeUploadPopup();
+  }
+};
+
 
 // Шаблоны
 // --------------
@@ -138,4 +160,14 @@ var bigPicture = document.querySelector('.big-picture');
 var commentsList = bigPicture.querySelector('.social__comments');
 
 fillBigPicture(picturesData[0]);
-bigPicture.classList.remove('hidden');
+// bigPicture.classList.remove('hidden');
+
+var uploadPopup = document.querySelector('.img-upload__overlay');
+var uploadClose = uploadPopup.querySelector('.img-upload__cancel');
+var uploadForm = document.querySelector('.img-upload__form');
+var uploadFile = uploadForm.querySelector('#upload-file');
+var uploadHashtags = uploadForm.querySelector('.text__hashtags');
+var uploadDescription = uploadForm.querySelector('.text__description');
+
+uploadFile.addEventListener('change', openUploadPopup);
+uploadClose.addEventListener('click', closeUploadPopup);

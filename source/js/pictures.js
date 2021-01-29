@@ -131,6 +131,58 @@ var closeUploadPopup = function() {
   document.removeEventListener('keydown', onUploadPopupEscPress);
 };
 
+var applyImageEffect = function(effectName) {
+  if (currentEffect) {
+    imgPreview.classList.remove('effects__preview--' + currentEffect);
+  }
+
+  imgPreview.classList.add('effects__preview--' + effectName);
+
+  if (effectName === 'none') {
+    scale.classList.add('hidden');
+  } else {
+    scale.classList.remove('hidden');
+  }
+
+  scaleValueInput.value = '100';
+  imgPreview.style.filter = '';
+  currentEffect = effectName;
+};
+
+var changeImageEffectLevel = function(level) {
+  var filter = '';
+
+  switch (currentEffect) {
+    case 'chrome' :
+      filter = 'grayscale(' + (level / 100) + ')';
+      break;
+    case 'sepia' :
+      filter = 'sepia(' + (level / 100) + ')';
+      break;
+    case 'marvin' :
+      filter = 'invert(' + level + '%)';
+      break;
+    case 'phobos' :
+      filter = 'blur(' + (level * 5 / 100) + 'px)';
+      break;
+    case 'heat' :
+      filter = 'brightness(' + (level * 2 / 100 + 1) + ')';
+      break;
+  }
+
+  imgPreview.style.filter = filter;
+};
+
+var updateScaleValue = function() {
+  var pinLeft = scalePin.offsetLeft;
+  var scaleWidth = scaleLine.offsetWidth;
+
+  var value = Math.round(pinLeft / scaleWidth * 100);
+  scaleValueInput.value = value;
+
+  return value;
+};
+
 // Обработчики
 // --------------
 var onUploadPopupEscPress = function(evt) {
@@ -141,6 +193,15 @@ var onUploadPopupEscPress = function(evt) {
   }
 };
 
+var onEffectsChange = function(evt) {
+  var effectName = evt.target.value;
+  applyImageEffect(effectName);
+};
+
+var onScalePinMouseUp = function() {
+  var effectLevel = updateScaleValue();
+  changeImageEffectLevel(effectLevel);
+};
 
 // Шаблоны
 // --------------
@@ -160,6 +221,7 @@ var bigPicture = document.querySelector('.big-picture');
 var commentsList = bigPicture.querySelector('.social__comments');
 
 fillBigPicture(picturesData[0]);
+// TODO
 // bigPicture.classList.remove('hidden');
 
 var uploadPopup = document.querySelector('.img-upload__overlay');
@@ -171,3 +233,19 @@ var uploadDescription = uploadForm.querySelector('.text__description');
 
 uploadFile.addEventListener('change', openUploadPopup);
 uploadClose.addEventListener('click', closeUploadPopup);
+
+var imgUpload = document.querySelector('.img-upload');
+var imgPreview = imgUpload.querySelector('.img-upload__preview img');
+var effects = document.querySelector('.effects');
+var effectSelected = document.querySelector('.effects__radio:checked');
+var scale = document.querySelector('.scale');
+var scaleLine = document.querySelector('.scale__line');
+var scalePin = scale.querySelector('.scale__pin');
+var scaleValueInput = scale.querySelector('.scale__value');
+
+var currentEffect = '';
+
+effects.addEventListener('change', onEffectsChange);
+scalePin.addEventListener('mouseup', onScalePinMouseUp);
+
+applyImageEffect(effectSelected.value);

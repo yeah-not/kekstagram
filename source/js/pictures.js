@@ -93,6 +93,10 @@ var renderPicture = function(data) {
   picture.querySelector('.picture__stat--likes').textContent = data.likes;
   picture.querySelector('.picture__stat--comments').textContent = data.comments.length;
 
+  picture.addEventListener('click', function() {
+    openBigPicture(data);
+  });
+
   return picture;
 };
 
@@ -102,13 +106,13 @@ var template = document.querySelector('#main-template').content;
 var pictureTemplate = template.querySelector('.picture__link');
 
 var picturesData = generatePictures(PICTURES_NUM);
-var pictures = document.querySelector('.pictures');
+var picturesContainer = document.querySelector('.pictures');
 
-pictures.appendChild(renderFragment(picturesData, renderPicture));
+picturesContainer.appendChild(renderFragment(picturesData, renderPicture));
 
 
 // --------------
-// Просмотр большого изображения
+// Просмотр изображения в полноэкранном режиме
 // --------------
 
 var AVATARS_NUM = [1, 6];
@@ -142,6 +146,24 @@ var generateAvatarSrc = function() {
   return avatarSrc;
 };
 
+var openBigPicture = function(data) {
+  renderBigPicture(data);
+  document.addEventListener('keydown', onBigPictureEscPress);
+  bigPicture.classList.remove('hidden');
+};
+
+var closeBigPicture = function() {
+  document.removeEventListener('keydown', onBigPictureEscPress);
+  bigPicture.classList.add('hidden');
+};
+
+var onBigPictureEscPress = function(evt) {
+  if (evt.code === 'Escape') {
+    closeBigPicture();
+  }
+};
+
+
 // Старт
 // --------------
 // var template = document.querySelector('#main-template').content;
@@ -149,14 +171,12 @@ var commentTemplate = template.querySelector('.social__comment');
 var avatarUrl = commentTemplate.querySelector('.social__picture').src;
 
 var bigPicture = document.querySelector('.big-picture');
+var bigPictureClose = bigPicture.querySelector('.big-picture__cancel');
 var commentsList = bigPicture.querySelector('.social__comments');
 
-renderBigPicture(picturesData[0]);
-
-// TODO
-// bigPicture.classList.remove('hidden');
-
-
+bigPictureClose.addEventListener('click', function() {
+  closeBigPicture();
+});
 // --------------
 // Попап загрузки изображения
 // --------------
@@ -187,6 +207,7 @@ var onUploadPopupEscPress = function(evt) {
 var uploadPopup = document.querySelector('.img-upload__overlay');
 var uploadClose = uploadPopup.querySelector('.img-upload__cancel');
 var uploadFile = document.querySelector('#upload-file');
+// var uploadForm = document.querySelector('.img-upload__form');
 
 uploadFile.addEventListener('change', function() {
   openUploadPopup();

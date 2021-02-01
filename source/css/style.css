@@ -523,6 +523,8 @@ main {
   top: 0;
   left: 50%;
 
+  z-index: 2;
+
   font-family: "Open Sans", "Arial", sans-serif;
   font-weight: 400;
 

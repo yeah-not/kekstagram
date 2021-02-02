@@ -222,9 +222,13 @@ uploadClose.addEventListener('click', function() {
 // Наложение эффектов на изображение
 // --------------
 
+var EFFECT_LEVEL_DEFAULT = 100;
+
 // Функции
 // --------------
-var applyImageEffect = function(effectName) {
+var applyImageEffect = function(effectName, effectLevel) {
+  effectLevel = effectLevel || EFFECT_LEVEL_DEFAULT;
+
   if (currentEffect) {
     imgPreview.classList.remove('effects__preview--' + currentEffect);
   }
@@ -237,69 +241,75 @@ var applyImageEffect = function(effectName) {
     scale.classList.remove('hidden');
   }
 
-  scaleValueInput.value = '100';
-  imgPreview.style.filter = '';
-  currentEffect = effectName;
-};
-
-var changeImageEffectLevel = function(level) {
   var filter = '';
 
-  switch (currentEffect) {
+  switch (effectName) {
     case 'chrome' :
-      filter = 'grayscale(' + (level / 100) + ')';
+      filter = 'grayscale(' + (effectLevel / 100) + ')';
       break;
     case 'sepia' :
-      filter = 'sepia(' + (level / 100) + ')';
+      filter = 'sepia(' + (effectLevel / 100) + ')';
       break;
     case 'marvin' :
-      filter = 'invert(' + level + '%)';
+      filter = 'invert(' + effectLevel + '%)';
       break;
     case 'phobos' :
-      filter = 'blur(' + (level * 5 / 100) + 'px)';
+      filter = 'blur(' + (effectLevel * 5 / 100) + 'px)';
       break;
     case 'heat' :
-      filter = 'brightness(' + (level * 2 / 100 + 1) + ')';
+      filter = 'brightness(' + (effectLevel * 2 / 100 + 1) + ')';
       break;
   }
 
   imgPreview.style.filter = filter;
+  currentEffect = effectName;
 };
 
-var updateScaleValue = function() {
+var calcScaleValue = function() {
   var pinLeft = scalePin.offsetLeft;
   var scaleWidth = scaleLine.offsetWidth;
 
-  var value = Math.round(pinLeft / scaleWidth * 100);
-  scaleValueInput.value = value;
-
-  return value;
+  return Math.round(pinLeft / scaleWidth * 100);
 };
+
+var setScaleLevel = function(level) {
+  var levelCSS = level + '%';
+
+  scalePin.style.left = levelCSS;
+  scaleLevel.style.width = levelCSS;
+}
 
 // Старт
 // --------------
 var imgUpload = document.querySelector('.img-upload');
 var imgPreview = imgUpload.querySelector('.img-upload__preview img');
-var effects = document.querySelector('.effects');
+var effectControls = document.querySelector('.effects');
 var effectSelected = document.querySelector('.effects__radio:checked');
 var scale = document.querySelector('.scale');
 var scaleLine = document.querySelector('.scale__line');
 var scalePin = scale.querySelector('.scale__pin');
+var scaleLevel = scale.querySelector('.scale__level');
 var scaleValueInput = scale.querySelector('.scale__value');
 
 var currentEffect = '';
 
-var onEffectsChange = function(evt) {
+var onEffectControlsChange = function(evt) {
   var effectName = evt.target.value;
+  setScaleLevel(EFFECT_LEVEL_DEFAULT);
+  scaleValueInput.value = EFFECT_LEVEL_DEFAULT;
   applyImageEffect(effectName);
 };
 
 var onScalePinMouseUp = function() {
-  var effectLevel = updateScaleValue();
-  changeImageEffectLevel(effectLevel);
+  // TODO
+  setScaleLevel(20);
+
+  var scaleValue = calcScaleValue();
+  scaleValueInput.value = scaleValue;
+  applyImageEffect(currentEffect, scaleValue);
 };
 
-effects.addEventListener('change', onEffectsChange);
+effectControls.addEventListener('change', onEffectControlsChange);
 scalePin.addEventListener('mouseup', onScalePinMouseUp);
 
 applyImageEffect(effectSelected.value);

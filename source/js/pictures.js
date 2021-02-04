@@ -190,8 +190,11 @@ var openUploadPopup = function() {
 
 var closeUploadPopup = function() {
   uploadPopup.classList.add('hidden');
+
   uploadForm.reset();
   resetImageSize();
+  resetImageEffect();
+
   document.removeEventListener('keydown', onUploadPopupEscPress);
 };
 
@@ -216,10 +219,12 @@ uploadClose.addEventListener('click', function() {
   closeUploadPopup();
 });
 
+
 // --------------
 // Наложение эффектов на изображение
 // --------------
 
+var EFFECT_DEFAULT = 'heat';
 var EFFECT_LEVEL_DEFAULT = 100;
 
 // Функции
@@ -263,6 +268,11 @@ var applyImageEffect = function(effectName, effectLevel) {
   currentEffect = effectName;
 };
 
+var resetImageEffect = function() {
+  resetScale();
+  applyImageEffect(EFFECT_DEFAULT);
+};
+
 var calcScaleValue = function() {
   var pinLeft = scalePin.offsetLeft;
   var scaleWidth = scaleLine.offsetWidth;
@@ -275,7 +285,12 @@ var setScaleLevel = function(level) {
 
   scalePin.style.left = levelCSS;
   scaleLevel.style.width = levelCSS;
-}
+};
+
+var resetScale = function() {
+  scaleValueInput.value = EFFECT_LEVEL_DEFAULT;
+  setScaleLevel(EFFECT_LEVEL_DEFAULT);
+};
 
 // Старт
 // --------------
@@ -293,8 +308,7 @@ var currentEffect = '';
 
 var onEffectControlsChange = function(evt) {
   var effectName = evt.target.value;
-  setScaleLevel(EFFECT_LEVEL_DEFAULT);
-  scaleValueInput.value = EFFECT_LEVEL_DEFAULT;
+  resetScale();
   applyImageEffect(effectName);
 };
 

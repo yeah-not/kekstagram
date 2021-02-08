@@ -146,6 +146,12 @@ var generateAvatarSrc = function() {
   return avatarSrc;
 };
 
+var onBigPictureEscPress = function(evt) {
+  if (evt.code === 'Escape') {
+    closeBigPicture();
+  }
+};
+
 var openBigPicture = function(data) {
   renderBigPicture(data);
   document.addEventListener('keydown', onBigPictureEscPress);
@@ -153,14 +159,8 @@ var openBigPicture = function(data) {
 };
 
 var closeBigPicture = function() {
-  document.removeEventListener('keydown', onBigPictureEscPress);
   bigPicture.classList.add('hidden');
-};
-
-var onBigPictureEscPress = function(evt) {
-  if (evt.code === 'Escape') {
-    closeBigPicture();
-  }
+  document.removeEventListener('keydown', onBigPictureEscPress);
 };
 
 
@@ -177,12 +177,20 @@ var commentsList = bigPicture.querySelector('.social__comments');
 bigPictureClose.addEventListener('click', function() {
   closeBigPicture();
 });
+
+
 // --------------
 // Попап загрузки изображения
 // --------------
 
 // Функции
 // --------------
+var onUploadPopupEscPress = function(evt) {
+  if (evt.code === 'Escape') {
+    closeUploadPopup();
+  }
+};
+
 var openUploadPopup = function() {
   document.addEventListener('keydown', onUploadPopupEscPress);
   uploadPopup.classList.remove('hidden');
@@ -196,12 +204,6 @@ var closeUploadPopup = function() {
   resetImageEffect();
 
   document.removeEventListener('keydown', onUploadPopupEscPress);
-};
-
-var onUploadPopupEscPress = function(evt) {
-  if (evt.code === 'Escape') {
-    closeUploadPopup();
-  }
 };
 
 // Старт
@@ -229,6 +231,31 @@ var EFFECT_LEVEL_DEFAULT = 100;
 
 // Функции
 // --------------
+// Шкала
+var calcScaleValue = function() {
+  var pinLeft = scalePin.offsetLeft;
+  var scaleWidth = scaleLine.offsetWidth;
+
+  return Math.round(pinLeft / scaleWidth * 100);
+};
+
+var setScaleValue = function(value) {
+  scaleValueInput.value = value;
+};
+
+var setScaleLevel = function(level) {
+  var levelCSS = level + '%';
+
+  scalePin.style.left = levelCSS;
+  scaleLevel.style.width = levelCSS;
+};
+
+var resetScale = function() {
+  setScaleValue(EFFECT_LEVEL_DEFAULT);
+  setScaleLevel(EFFECT_LEVEL_DEFAULT);
+};
+
+// Эффект
 var applyImageEffect = function(effectName, effectLevel) {
   effectLevel = effectLevel || EFFECT_LEVEL_DEFAULT;
 
@@ -273,36 +300,12 @@ var resetImageEffect = function() {
   applyImageEffect(EFFECT_DEFAULT);
 };
 
-var calcScaleValue = function() {
-  var pinLeft = scalePin.offsetLeft;
-  var scaleWidth = scaleLine.offsetWidth;
-
-  return Math.round(pinLeft / scaleWidth * 100);
-};
-
-var setScaleLevel = function(level) {
-  var levelCSS = level + '%';
-
-  scalePin.style.left = levelCSS;
-  scaleLevel.style.width = levelCSS;
-};
-
-var resetScale = function() {
-  scaleValueInput.value = EFFECT_LEVEL_DEFAULT;
-  setScaleLevel(EFFECT_LEVEL_DEFAULT);
-};
-
 // Старт
 // --------------
 var imgUpload = document.querySelector('.img-upload');
 var imgPreview = imgUpload.querySelector('.img-upload__preview img');
 var effectControls = document.querySelector('.effects');
 var effectSelected = document.querySelector('.effects__radio:checked');
-var scale = document.querySelector('.scale');
-var scaleLine = document.querySelector('.scale__line');
-var scalePin = scale.querySelector('.scale__pin');
-var scaleLevel = scale.querySelector('.scale__level');
-var scaleValueInput = scale.querySelector('.scale__value');
 
 var currentEffect = '';
 
@@ -312,20 +315,25 @@ var onEffectControlsChange = function(evt) {
   applyImageEffect(effectName);
 };
 
+effectControls.addEventListener('change', onEffectControlsChange);
+applyImageEffect(effectSelected.value);
+
+var scale = document.querySelector('.scale');
+var scaleLine = document.querySelector('.scale__line');
+var scalePin = scale.querySelector('.scale__pin');
+var scaleLevel = scale.querySelector('.scale__level');
+var scaleValueInput = scale.querySelector('.scale__value');
+
 var onScalePinMouseUp = function() {
   // TODO
   setScaleLevel(20);
 
   var scaleValue = calcScaleValue();
-  scaleValueInput.value = scaleValue;
+  setScaleValue(scaleValue);
   applyImageEffect(currentEffect, scaleValue);
 };
 
-effectControls.addEventListener('change', onEffectControlsChange);
 scalePin.addEventListener('mouseup', onScalePinMouseUp);
-
-applyImageEffect(effectSelected.value);
-
 
 // --------------
 // Редактирование размера изображения
@@ -338,6 +346,11 @@ var SIZE_DEFAULT = 100;
 
 // Функции
 // --------------
+var resetImageSize = function() {
+  sizeValueInput.value = SIZE_DEFAULT;
+  imgPreview.style.transform = 'scale(' + SIZE_DEFAULT / 100 + ')';
+};
+
 var resizeImage = function(isDecrease) {
   var size = parseInt(sizeValueInput.value, 10);
 
@@ -350,11 +363,6 @@ var resizeImage = function(isDecrease) {
   sizeValueInput.value = size + '%';
   imgPreview.style.transform = 'scale(' + size / 100 + ')';
 };
-
-var resetImageSize = function() {
-  sizeValueInput.value = SIZE_DEFAULT;
-  imgPreview.style.transform = 'scale(' + SIZE_DEFAULT / 100 + ')';
-}
 
 // Старт
 // --------------
@@ -395,9 +403,9 @@ var ERROR_COMMENT_TOO_LONG = 'Максимальная длина коммент
 
 // Функции
 // --------------
-var validateHashtag = function(hashtag, index, hashtags) {
+var validateHashtag = function(hashtag, index, array) {
   var firstChar = hashtag[0];
-  var tagCloneIndex = hashtags.indexOf(hashtag, index + 1);
+  var tagCloneIndex = array.indexOf(hashtag, index + 1);
   var errorMsg = '';
 
   if (firstChar !== '#') {
@@ -415,8 +423,8 @@ var validateHashtag = function(hashtag, index, hashtags) {
   return errorMsg;
 };
 
-var validateHashtagsInput = function(input) {
-  var tagsStr = input.value;
+var validateHashtagsInput = function() {
+  var tagsStr = hashtagsInput.value;
   var tags = tagsStr.trim().toLowerCase().split(' ');
   var errorMsg = '';
 
@@ -441,6 +449,16 @@ var validateHashtagsInput = function(input) {
   input.reportValidity();
 };
 
+var validateCommentInput = function() {
+  if (commentInput.validity.tooShort) {
+    commentInput.setCustomValidity(ERROR_COMMENT_TOO_SHORT);
+  } else if (commentInput.validity.tooLong) {
+    commentInput.setCustomValidity(ERROR_COMMENT_TOO_LONG);
+  } else {
+    commentInput.setCustomValidity('');
+  }
+};
+
 // Старт
 // --------------
 var uploadForm = document.querySelector('.img-upload__form');
@@ -449,7 +467,7 @@ var hashtagsInput = uploadText.querySelector('.text__hashtags');
 var commentInput = uploadText.querySelector('.text__description');
 
 uploadForm.addEventListener('submit', function(evt) {
-  validateHashtagsInput(hashtagsInput);
+  validateHashtagsInput();
 
   if (!hashtagsInput.validity.valid) {
     evt.preventDefault();
@@ -457,13 +475,7 @@ uploadForm.addEventListener('submit', function(evt) {
 });
 
 commentInput.addEventListener('invalid', function() {
-  if (commentInput.validity.tooShort) {
-    commentInput.setCustomValidity(ERROR_COMMENT_TOO_SHORT);
-  } else if (commentInput.validity.tooLong) {
-    commentInput.setCustomValidity(ERROR_COMMENT_TOO_LONG);
-  } else {
-    commentInput.setCustomValidity('');
-  }
+  validateCommentInput();
 });
 
 uploadText.addEventListener('invalid', function(evt) {
@@ -471,9 +483,7 @@ uploadText.addEventListener('invalid', function(evt) {
 }, true);
 
 uploadText.addEventListener('input', function(evt) {
-  var target = evt.target;
-
-  target.setCustomValidity('');
+  evt.target.setCustomValidity('');
 
   if (evt.target.validity.valid) {
     evt.target.classList.remove('input-error');

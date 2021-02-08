@@ -75,6 +75,10 @@ main {
   overflow: hidden;
 }
 
+.input-error {
+  box-shadow: 0 0 7px 3px red;
+}
+
 
 /* Кнопка закрытия */
 

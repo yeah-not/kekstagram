@@ -146,6 +146,12 @@ var generateAvatarSrc = function() {
   return avatarSrc;
 };
 
+var onBigPictureEscPress = function(evt) {
+  if (evt.code === 'Escape') {
+    closeBigPicture();
+  }
+};
+
 var openBigPicture = function(data) {
   renderBigPicture(data);
   document.addEventListener('keydown', onBigPictureEscPress);
@@ -153,14 +159,8 @@ var openBigPicture = function(data) {
 };
 
 var closeBigPicture = function() {
-  document.removeEventListener('keydown', onBigPictureEscPress);
   bigPicture.classList.add('hidden');
-};
-
-var onBigPictureEscPress = function(evt) {
-  if (evt.code === 'Escape') {
-    closeBigPicture();
-  }
+  document.removeEventListener('keydown', onBigPictureEscPress);
 };
 
 
@@ -177,12 +177,20 @@ var commentsList = bigPicture.querySelector('.social__comments');
 bigPictureClose.addEventListener('click', function() {
   closeBigPicture();
 });
+
+
 // --------------
 // Попап загрузки изображения
 // --------------
 
 // Функции
 // --------------
+var onUploadPopupEscPress = function(evt) {
+  if (evt.code === 'Escape') {
+    closeUploadPopup();
+  }
+};
+
 var openUploadPopup = function() {
   document.addEventListener('keydown', onUploadPopupEscPress);
   uploadPopup.classList.remove('hidden');
@@ -190,17 +198,12 @@ var openUploadPopup = function() {
 
 var closeUploadPopup = function() {
   uploadPopup.classList.add('hidden');
+
   uploadForm.reset();
   resetImageSize();
-  document.removeEventListener('keydown', onUploadPopupEscPress);
-};
+  resetImageEffect();
 
-var onUploadPopupEscPress = function(evt) {
-  if (evt.code === 'Escape'
-    && evt.target !== uploadHashtags
-    && evt.target !== uploadDescription) {
-    closeUploadPopup();
-  }
+  document.removeEventListener('keydown', onUploadPopupEscPress);
 };
 
 // Старт
@@ -218,14 +221,41 @@ uploadClose.addEventListener('click', function() {
   closeUploadPopup();
 });
 
+
 // --------------
 // Наложение эффектов на изображение
 // --------------
 
+var EFFECT_DEFAULT = 'heat';
 var EFFECT_LEVEL_DEFAULT = 100;
 
 // Функции
 // --------------
+// Шкала
+var calcScaleValue = function() {
+  var pinLeft = scalePin.offsetLeft;
+  var scaleWidth = scaleLine.offsetWidth;
+
+  return Math.round(pinLeft / scaleWidth * 100);
+};
+
+var setScaleValue = function(value) {
+  scaleValueInput.value = value;
+};
+
+var setScaleLevel = function(level) {
+  var levelCSS = level + '%';
+
+  scalePin.style.left = levelCSS;
+  scaleLevel.style.width = levelCSS;
+};
+
+var resetScale = function() {
+  setScaleValue(EFFECT_LEVEL_DEFAULT);
+  setScaleLevel(EFFECT_LEVEL_DEFAULT);
+};
+
+// Эффект
 var applyImageEffect = function(effectName, effectLevel) {
   effectLevel = effectLevel || EFFECT_LEVEL_DEFAULT;
 
@@ -265,19 +295,10 @@ var applyImageEffect = function(effectName, effectLevel) {
   currentEffect = effectName;
 };
 
-var calcScaleValue = function() {
-  var pinLeft = scalePin.offsetLeft;
-  var scaleWidth = scaleLine.offsetWidth;
-
-  return Math.round(pinLeft / scaleWidth * 100);
+var resetImageEffect = function() {
+  resetScale();
+  applyImageEffect(EFFECT_DEFAULT);
 };
-
-var setScaleLevel = function(level) {
-  var levelCSS = level + '%';
-
-  scalePin.style.left = levelCSS;
-  scaleLevel.style.width = levelCSS;
-}
 
 // Старт
 // --------------
@@ -285,35 +306,34 @@ var imgUpload = document.querySelector('.img-upload');
 var imgPreview = imgUpload.querySelector('.img-upload__preview img');
 var effectControls = document.querySelector('.effects');
 var effectSelected = document.querySelector('.effects__radio:checked');
+
+var currentEffect = '';
+
+var onEffectControlsChange = function(evt) {
+  var effectName = evt.target.value;
+  resetScale();
+  applyImageEffect(effectName);
+};
+
+effectControls.addEventListener('change', onEffectControlsChange);
+applyImageEffect(effectSelected.value);
+
 var scale = document.querySelector('.scale');
 var scaleLine = document.querySelector('.scale__line');
 var scalePin = scale.querySelector('.scale__pin');
 var scaleLevel = scale.querySelector('.scale__level');
 var scaleValueInput = scale.querySelector('.scale__value');
 
-var currentEffect = '';
-
-var onEffectControlsChange = function(evt) {
-  var effectName = evt.target.value;
-  setScaleLevel(EFFECT_LEVEL_DEFAULT);
-  scaleValueInput.value = EFFECT_LEVEL_DEFAULT;
-  applyImageEffect(effectName);
-};
-
 var onScalePinMouseUp = function() {
   // TODO
   setScaleLevel(20);
 
   var scaleValue = calcScaleValue();
-  scaleValueInput.value = scaleValue;
+  setScaleValue(scaleValue);
   applyImageEffect(currentEffect, scaleValue);
 };
 
-effectControls.addEventListener('change', onEffectControlsChange);
 scalePin.addEventListener('mouseup', onScalePinMouseUp);
-
-applyImageEffect(effectSelected.value);
-
 
 // --------------
 // Редактирование размера изображения
@@ -326,6 +346,11 @@ var SIZE_DEFAULT = 100;
 
 // Функции
 // --------------
+var resetImageSize = function() {
+  sizeValueInput.value = SIZE_DEFAULT;
+  imgPreview.style.transform = 'scale(' + SIZE_DEFAULT / 100 + ')';
+};
+
 var resizeImage = function(isDecrease) {
   var size = parseInt(sizeValueInput.value, 10);
 
@@ -338,11 +363,6 @@ var resizeImage = function(isDecrease) {
   sizeValueInput.value = size + '%';
   imgPreview.style.transform = 'scale(' + size / 100 + ')';
 };
-
-var resetImageSize = function() {
-  sizeValueInput.value = SIZE_DEFAULT;
-  imgPreview.style.transform = 'scale(' + SIZE_DEFAULT / 100 + ')';
-}
 
 // Старт
 // --------------
@@ -366,10 +386,112 @@ sizePlus.addEventListener('click', function() {
 // Валидация формы загрузки изображения
 // --------------
 
+var TAG_MAX_LENGTH = 20;
+var TAGS_MAX_NUM = 5;
+var TAGS_PATTERN = /[^\w\sА-Яа-яЁё\# -]/;
+var COMMENT_MIN_LENGTH = 20;
+var COMMENT_MAX_LENGTH = 140;
+
+var ERROR_NO_HASH = 'Хэш-тег должен начинаться с символа # (решётка)';
+var ERROR_ONLY_HASH = 'Хэш-тег не может состоять только из одной решётки';
+var ERROR_TAG_TOO_LONG = 'Максимальная длина одного хэш-тега ' + TAG_MAX_LENGTH + ' символов, включая решётку';
+var ERROR_TAG_NOT_UNIQUE = 'Один и тот же хэш-тег не может быть использован дважды';
+var ERROR_TAGS_PATTERN = 'Хэш-теги разделяются пробелами. Используются буквы, цифры, символы "-", "_"';
+var ERROR_TAGS_NUM = 'Можно указать не больше ' + TAGS_MAX_NUM + ' хэш-тегов';
+var ERROR_COMMENT_TOO_SHORT = 'Минимальная длина комментария ' + COMMENT_MIN_LENGTH + ' cимволов, хотя он и не обязателен;)';
+var ERROR_COMMENT_TOO_LONG = 'Максимальная длина комментария ' + COMMENT_MAX_LENGTH + ' cимволов, хотя он и не обязателен;)';
+
 // Функции
 // --------------
+var validateHashtag = function(hashtag, index, array) {
+  var firstChar = hashtag[0];
+  var tagCloneIndex = array.indexOf(hashtag, index + 1);
+  var errorMsg = '';
+
+  if (firstChar !== '#') {
+    errorMsg = ERROR_NO_HASH;
+  } else if (firstChar === '#' && hashtag.length === 1) {
+    errorMsg = ERROR_ONLY_HASH;
+  } else if (hashtag.length > TAG_MAX_LENGTH) {
+    errorMsg = ERROR_TAG_TOO_LONG;
+  } else if (tagCloneIndex > 0) {
+    errorMsg = ERROR_TAG_NOT_UNIQUE;
+  } else {
+    errorMsg = '';
+  }
+
+  return errorMsg;
+};
+
+var validateHashtagsInput = function() {
+  var tagsStr = hashtagsInput.value;
+  var tags = tagsStr.trim().toLowerCase().split(' ');
+  var errorMsg = '';
+
+  tags = tags.filter(function(el) {
+    return el !== '';
+  });
+
+  if (tagsStr.match(TAGS_PATTERN)) {
+    errorMsg = ERROR_TAGS_PATTERN;
+  } else if (tags.length > TAGS_MAX_NUM) {
+    errorMsg = ERROR_TAGS_NUM;
+  } else {
+    for (var i = 0; i < tags.length; i++) {
+      errorMsg = validateHashtag(tags[i], i, tags);
+      if (errorMsg) {
+        break;
+      }
+    }
+  }
+
+  input.setCustomValidity(errorMsg);
+  input.reportValidity();
+};
+
+var validateCommentInput = function() {
+  if (commentInput.validity.tooShort) {
+    commentInput.setCustomValidity(ERROR_COMMENT_TOO_SHORT);
+  } else if (commentInput.validity.tooLong) {
+    commentInput.setCustomValidity(ERROR_COMMENT_TOO_LONG);
+  } else {
+    commentInput.setCustomValidity('');
+  }
+};
+
 // Старт
 // --------------
 var uploadForm = document.querySelector('.img-upload__form');
-var uploadHashtags = uploadForm.querySelector('.text__hashtags');
-var uploadDescription = uploadForm.querySelector('.text__description');
+var uploadText = uploadForm.querySelector('.img-upload__text');
+var hashtagsInput = uploadText.querySelector('.text__hashtags');
+var commentInput = uploadText.querySelector('.text__description');
+
+uploadForm.addEventListener('submit', function(evt) {
+  validateHashtagsInput();
+
+  if (!hashtagsInput.validity.valid) {
+    evt.preventDefault();
+  }
+});
+
+commentInput.addEventListener('invalid', function() {
+  validateCommentInput();
+});
+
+uploadText.addEventListener('invalid', function(evt) {
+  evt.target.classList.add('input-error');
+}, true);
+
+uploadText.addEventListener('input', function(evt) {
+  evt.target.setCustomValidity('');
+
+  if (evt.target.validity.valid) {
+    evt.target.classList.remove('input-error');
+  }
+});
+
+uploadText.addEventListener('keydown', function(evt) {
+  if (evt.code === 'Escape') {
+    evt.stopPropagation();
+  }
+});

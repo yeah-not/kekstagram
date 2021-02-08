@@ -459,16 +459,6 @@ var validateCommentInput = function() {
   }
 };
 
-var validateCommentInput = function() {
-  if (commentInput.validity.tooShort) {
-    commentInput.setCustomValidity(ERROR_COMMENT_TOO_SHORT);
-  } else if (commentInput.validity.tooLong) {
-    commentInput.setCustomValidity(ERROR_COMMENT_TOO_LONG);
-  } else {
-    commentInput.setCustomValidity('');
-  }
-};
-
 // Старт
 // --------------
 var uploadForm = document.querySelector('.img-upload__form');

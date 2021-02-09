@@ -383,17 +383,15 @@ uploadText.addEventListener('keydown', function(evt) {
 });
 
 // --------------
-// Наложение эффектов на изображение
+// Шкала диапазона
 // --------------
-var EFFECT_DEFAULT = 'heat';
-var EFFECT_LEVEL_DEFAULT = 100;
+var SCALE_MIN = 0;
+var SCALE_MAX = 100;
 
-// Шкала
-// --------------
 var scale = document.querySelector('.scale');
 var scaleLine = scale.querySelector('.scale__line');
 var scalePin = scale.querySelector('.scale__pin');
-var scaleLevel = scale.querySelector('.scale__level');
+var scaleLevelElem = scale.querySelector('.scale__level');
 var scaleValueInput = scale.querySelector('.scale__value');
 
 var hideScale = function() {
@@ -404,47 +402,73 @@ var showScale = function() {
   scale.classList.remove('hidden');
 };
 
-var calcScaleValue = function() {
-  var pinLeft = scalePin.offsetLeft;
-  var scaleWidth = scaleLine.offsetWidth;
+var calcScaleLevel = function(shift) {
+  var pinLeft = scalePin.offsetLeft + shift;
+  var level = pinLeft / scaleLine.offsetWidth * 100;
 
-  return Math.round(pinLeft / scaleWidth * 100);
-};
-
-var setScaleValue = function(value) {
-  scaleValueInput.value = value;
+  return level;
 };
 
 var setScaleLevel = function(level) {
   var levelCSS = level + '%';
 
   scalePin.style.left = levelCSS;
-  scaleLevel.style.width = levelCSS;
+  scaleLevelElem.style.width = levelCSS;
+};
+
+var setScaleValue = function(level) {
+  var value = Math.round(level);
+
+  scaleValueInput.value = value;
+
+  return value;
 };
 
 var resetScale = function() {
-  setScaleValue(EFFECT_LEVEL_DEFAULT);
-  setScaleLevel(EFFECT_LEVEL_DEFAULT);
+  setScaleValue(SCALE_MAX);
+  setScaleLevel(SCALE_MAX);
 };
 
-scalePin.addEventListener('mouseup', function() {
-  // TODO
-  setScaleLevel(20);
+scalePin.addEventListener('mousedown', function(evt) {
+  var startX = evt.clientX;
 
-  var scaleValue = calcScaleValue();
-  setScaleValue(scaleValue);
-  applyImageEffect(currentEffect, scaleValue);
+  var onMouseMove = function(moveEvt) {
+    var shift = moveEvt.clientX - startX;
+    startX = moveEvt.clientX;
+
+    var scaleLevel = calcScaleLevel(shift);
+
+    if (scaleLevel >= SCALE_MIN && scaleLevel <= SCALE_MAX) {
+      setScaleLevel(scaleLevel);
+      applyImageEffect(currentEffect, setScaleValue(scaleLevel));
+    }
+
+  };
+
+  var onMouseUp = function() {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseMove);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 });
 
-// Эффект
 // --------------
+// Выбор и наложение эффекта на изображение
+// --------------
+var EFFECT_DEFAULT = 'heat';
+var EFFECT_LEVEL_DEFAULT = 100;
+
 var imgUpload = document.querySelector('.img-upload');
 var imgPreview = imgUpload.querySelector('.img-upload__preview img');
 var effectSelected = document.querySelector('.effects__radio:checked');
 var currentEffect = '';
 
 var applyImageEffect = function(effectName, effectLevel) {
-  effectLevel = effectLevel || EFFECT_LEVEL_DEFAULT;
+  if (typeof effectLevel === 'undefined') {
+    effectLevel = EFFECT_LEVEL_DEFAULT;
+  }
 
   if (currentEffect) {
     imgPreview.classList.remove('effects__preview--' + currentEffect);

@@ -4,53 +4,6 @@
 //  Миниатюры изображений
 // --------------
 
-var PICTURES_NUM = 25;
-var LIKES_NUM = [15, 200];
-var COMMENTS_NUM = [1, 20];
-var COMMENTS = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
-];
-var DESCRIPTIONS = [
-  'Тестим новую камеру!',
-  'Затусили с друзьями на море',
-  'Как же круто тут кормят',
-  'Отдыхаем...',
-  'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
-  'Вот это тачка!',
-];
-
-// Функции
-// --------------
-var generatePictures = function(num) {
-  var data = [];
-
-  for (var i = 0; i < num; i++) {
-    data[i] = {
-      url: 'photos/' + (i + 1) + '.jpg',
-      likes: window.util.getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
-      comments: generateComments(window.util.getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
-      description: window.util.getRandomEl(DESCRIPTIONS),
-    };
-  }
-
-  return window.util.shuffle(data);
-};
-
-var generateComments = function(num) {
-  var comments = [];
-
-  for (var i = 0; i < num; i++) {
-    comments[i] = window.util.getRandomInt(0, 1) ? window.util.getRandomEl(COMMENTS) : window.util.getRandomEl(COMMENTS) + ' ' + window.util.getRandomEl(COMMENTS);
-  }
-
-  return comments;
-};
-
 var renderPicture = function(data) {
   var picture = pictureTemplate.cloneNode(true);
 
@@ -70,7 +23,7 @@ var renderPicture = function(data) {
 var template = document.querySelector('#main-template').content;
 var pictureTemplate = template.querySelector('.picture__link');
 
-var picturesData = generatePictures(PICTURES_NUM);
+var picturesData = window.data.generatePictures();
 var picturesContainer = document.querySelector('.pictures');
 
 picturesContainer.appendChild(window.util.renderFragment(picturesData, renderPicture));

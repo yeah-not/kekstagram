@@ -112,9 +112,7 @@ var generateAvatarSrc = function() {
 };
 
 var onBigPictureEscPress = function(evt) {
-  if (evt.code === 'Escape') {
-    closeBigPicture();
-  }
+  window.util.isEscEvent(evt, closeBigPicture);
 };
 
 var openBigPicture = function(data) {
@@ -151,9 +149,7 @@ bigPictureClose.addEventListener('click', function() {
 // Функции
 // --------------
 var onUploadPopupEscPress = function(evt) {
-  if (evt.code === 'Escape') {
-    closeUploadPopup();
-  }
+  window.util.isEscEvent(evt, closeUploadPopup);
 };
 
 var openUploadPopup = function() {
@@ -342,9 +338,9 @@ uploadText.addEventListener('input', function(evt) {
 });
 
 uploadText.addEventListener('keydown', function(evt) {
-  if (evt.code === 'Escape') {
+  window.util.isEscEvent(evt, function() {
     evt.stopPropagation();
-  }
+  });
 });
 
 // --------------

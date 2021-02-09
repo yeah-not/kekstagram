@@ -32,6 +32,11 @@
       }
 
       return fragment;
+    },
+    isEscEvent: function(evt, action) {
+      if (evt.code === 'Escape') {
+        action();
+      }
     }
   };
 })();

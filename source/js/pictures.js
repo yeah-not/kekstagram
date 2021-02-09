@@ -12,7 +12,7 @@ var renderPicture = function(data) {
   picture.querySelector('.picture__stat--comments').textContent = data.comments.length;
 
   picture.addEventListener('click', function() {
-    openBigPicture(data);
+    window.preview.open(data);
   });
 
   return picture;
@@ -27,72 +27,6 @@ var picturesData = window.data.generatePictures();
 var picturesContainer = document.querySelector('.pictures');
 
 picturesContainer.appendChild(window.util.renderFragment(picturesData, renderPicture));
-
-
-// --------------
-// Просмотр изображения в полноэкранном режиме
-// --------------
-
-var AVATARS_NUM = [1, 6];
-
-// Функции
-// --------------
-var renderBigPicture = function(data) {
-  bigPicture.querySelector('.big-picture__img img').src = data.url;
-  bigPicture.querySelector('.likes-count').textContent = data.likes;
-  bigPicture.querySelector('.comments-count').textContent = data.comments.length;
-  bigPicture.querySelector('.social__caption').textContent = data.description;
-  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-  bigPicture.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
-
-  commentsList.appendChild(window.util.renderFragment(data.comments, renderComment));
-};
-
-var renderComment = function(text) {
-  var comment = commentTemplate.cloneNode(true);
-
-  comment.querySelector('.social__picture').src = generateAvatarSrc();
-  comment.querySelector('.social__text').textContent = text;
-
-  return comment;
-};
-
-var generateAvatarSrc = function() {
-  var avatarInt = window.util.getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]);
-  var avatarSrc = avatarUrl.replace(AVATARS_NUM[0], avatarInt);
-
-  return avatarSrc;
-};
-
-var onBigPictureEscPress = function(evt) {
-  window.util.isEscEvent(evt, closeBigPicture);
-};
-
-var openBigPicture = function(data) {
-  renderBigPicture(data);
-  document.addEventListener('keydown', onBigPictureEscPress);
-  bigPicture.classList.remove('hidden');
-};
-
-var closeBigPicture = function() {
-  bigPicture.classList.add('hidden');
-  document.removeEventListener('keydown', onBigPictureEscPress);
-};
-
-
-// Старт
-// --------------
-// var template = document.querySelector('#main-template').content;
-var commentTemplate = template.querySelector('.social__comment');
-var avatarUrl = commentTemplate.querySelector('.social__picture').src;
-
-var bigPicture = document.querySelector('.big-picture');
-var bigPictureClose = bigPicture.querySelector('.big-picture__cancel');
-var commentsList = bigPicture.querySelector('.social__comments');
-
-bigPictureClose.addEventListener('click', function() {
-  closeBigPicture();
-});
 
 
 // --------------

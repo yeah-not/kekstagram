@@ -1,7 +1,7 @@
 'use strict';
 
 // --------------
-// Генерация данных
+// Данные
 // --------------
 
 (function() {
@@ -38,6 +38,7 @@
   };
 
   window.data = {
+    template: document.querySelector('#main-template').content,
     generatePictures: function(num) {
       num = num || PICTURES_NUM;
 

@@ -1,41 +1,6 @@
 'use strict';
 
 // --------------
-// Утилиты
-// --------------
-
-var getRandomEl = function(array) {
-  return array[Math.floor(Math.random() * array.length)];
-};
-
-var getRandomInt = function(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-var shuffle = function(array) {
-  var j; var temp;
-
-  for (var i = array.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    temp = array[j];
-    array[j] = array[i];
-    array[i] = temp;
-  }
-
-  return array;
-};
-
-var renderFragment = function(data, renderItem) {
-  var fragment = document.createDocumentFragment();
-
-  for (var i = 0; i < data.length; i++) {
-    fragment.appendChild(renderItem(data[i]));
-  }
-
-  return fragment;
-};
-
-// --------------
 //  Миниатюры изображений
 // --------------
 
@@ -67,20 +32,20 @@ var generatePictures = function(num) {
   for (var i = 0; i < num; i++) {
     data[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
-      comments: generateComments(getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
-      description: getRandomEl(DESCRIPTIONS),
+      likes: window.util.getRandomInt(LIKES_NUM[0], LIKES_NUM[1]),
+      comments: generateComments(window.util.getRandomInt(COMMENTS_NUM[0], COMMENTS_NUM[1])),
+      description: window.util.getRandomEl(DESCRIPTIONS),
     };
   }
 
-  return shuffle(data);
+  return window.util.shuffle(data);
 };
 
 var generateComments = function(num) {
   var comments = [];
 
   for (var i = 0; i < num; i++) {
-    comments[i] = getRandomInt(0, 1) ? getRandomEl(COMMENTS) : getRandomEl(COMMENTS) + ' ' + getRandomEl(COMMENTS);
+    comments[i] = window.util.getRandomInt(0, 1) ? window.util.getRandomEl(COMMENTS) : window.util.getRandomEl(COMMENTS) + ' ' + window.util.getRandomEl(COMMENTS);
   }
 
   return comments;
@@ -108,7 +73,7 @@ var pictureTemplate = template.querySelector('.picture__link');
 var picturesData = generatePictures(PICTURES_NUM);
 var picturesContainer = document.querySelector('.pictures');
 
-picturesContainer.appendChild(renderFragment(picturesData, renderPicture));
+picturesContainer.appendChild(window.util.renderFragment(picturesData, renderPicture));
 
 
 // --------------
@@ -127,7 +92,7 @@ var renderBigPicture = function(data) {
   bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPicture.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
 
-  commentsList.appendChild(renderFragment(data.comments, renderComment));
+  commentsList.appendChild(window.util.renderFragment(data.comments, renderComment));
 };
 
 var renderComment = function(text) {
@@ -140,7 +105,7 @@ var renderComment = function(text) {
 };
 
 var generateAvatarSrc = function() {
-  var avatarInt = getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]);
+  var avatarInt = window.util.getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]);
   var avatarSrc = avatarUrl.replace(AVATARS_NUM[0], avatarInt);
 
   return avatarSrc;

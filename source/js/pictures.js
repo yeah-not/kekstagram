@@ -221,120 +221,6 @@ uploadClose.addEventListener('click', function() {
   closeUploadPopup();
 });
 
-
-// --------------
-// Наложение эффектов на изображение
-// --------------
-
-var EFFECT_DEFAULT = 'heat';
-var EFFECT_LEVEL_DEFAULT = 100;
-
-// Функции
-// --------------
-// Шкала
-var calcScaleValue = function() {
-  var pinLeft = scalePin.offsetLeft;
-  var scaleWidth = scaleLine.offsetWidth;
-
-  return Math.round(pinLeft / scaleWidth * 100);
-};
-
-var setScaleValue = function(value) {
-  scaleValueInput.value = value;
-};
-
-var setScaleLevel = function(level) {
-  var levelCSS = level + '%';
-
-  scalePin.style.left = levelCSS;
-  scaleLevel.style.width = levelCSS;
-};
-
-var resetScale = function() {
-  setScaleValue(EFFECT_LEVEL_DEFAULT);
-  setScaleLevel(EFFECT_LEVEL_DEFAULT);
-};
-
-// Эффект
-var applyImageEffect = function(effectName, effectLevel) {
-  effectLevel = effectLevel || EFFECT_LEVEL_DEFAULT;
-
-  if (currentEffect) {
-    imgPreview.classList.remove('effects__preview--' + currentEffect);
-  }
-
-  imgPreview.classList.add('effects__preview--' + effectName);
-
-  if (effectName === 'none') {
-    scale.classList.add('hidden');
-  } else {
-    scale.classList.remove('hidden');
-  }
-
-  var filter = '';
-
-  switch (effectName) {
-    case 'chrome' :
-      filter = 'grayscale(' + (effectLevel / 100) + ')';
-      break;
-    case 'sepia' :
-      filter = 'sepia(' + (effectLevel / 100) + ')';
-      break;
-    case 'marvin' :
-      filter = 'invert(' + effectLevel + '%)';
-      break;
-    case 'phobos' :
-      filter = 'blur(' + (effectLevel * 5 / 100) + 'px)';
-      break;
-    case 'heat' :
-      filter = 'brightness(' + (effectLevel * 2 / 100 + 1) + ')';
-      break;
-  }
-
-  imgPreview.style.filter = filter;
-  currentEffect = effectName;
-};
-
-var resetImageEffect = function() {
-  resetScale();
-  applyImageEffect(EFFECT_DEFAULT);
-};
-
-// Старт
-// --------------
-var imgUpload = document.querySelector('.img-upload');
-var imgPreview = imgUpload.querySelector('.img-upload__preview img');
-var effectControls = document.querySelector('.effects');
-var effectSelected = document.querySelector('.effects__radio:checked');
-
-var currentEffect = '';
-
-var onEffectControlsChange = function(evt) {
-  var effectName = evt.target.value;
-  resetScale();
-  applyImageEffect(effectName);
-};
-
-effectControls.addEventListener('change', onEffectControlsChange);
-applyImageEffect(effectSelected.value);
-
-var scale = document.querySelector('.scale');
-var scaleLine = document.querySelector('.scale__line');
-var scalePin = scale.querySelector('.scale__pin');
-var scaleLevel = scale.querySelector('.scale__level');
-var scaleValueInput = scale.querySelector('.scale__value');
-
-var onScalePinMouseUp = function() {
-  // TODO
-  setScaleLevel(20);
-
-  var scaleValue = calcScaleValue();
-  setScaleValue(scaleValue);
-  applyImageEffect(currentEffect, scaleValue);
-};
-
-scalePin.addEventListener('mouseup', onScalePinMouseUp);
-
 // --------------
 // Редактирование размера изображения
 // --------------
@@ -445,8 +331,8 @@ var validateHashtagsInput = function() {
     }
   }
 
-  input.setCustomValidity(errorMsg);
-  input.reportValidity();
+  hashtagsInput.setCustomValidity(errorMsg);
+  hashtagsInput.reportValidity();
 };
 
 var validateCommentInput = function() {
@@ -495,3 +381,143 @@ uploadText.addEventListener('keydown', function(evt) {
     evt.stopPropagation();
   }
 });
+
+// --------------
+// Шкала диапазона
+// --------------
+var SCALE_MIN = 0;
+var SCALE_MAX = 100;
+
+var scale = document.querySelector('.scale');
+var scaleLine = scale.querySelector('.scale__line');
+var scalePin = scale.querySelector('.scale__pin');
+var scaleLevelElem = scale.querySelector('.scale__level');
+var scaleValueInput = scale.querySelector('.scale__value');
+
+var hideScale = function() {
+  scale.classList.add('hidden');
+};
+
+var showScale = function() {
+  scale.classList.remove('hidden');
+};
+
+var calcScaleLevel = function(shift) {
+  var pinLeft = scalePin.offsetLeft + shift;
+  var level = pinLeft / scaleLine.offsetWidth * 100;
+
+  return level;
+};
+
+var setScaleLevel = function(level) {
+  var levelCSS = level + '%';
+
+  scalePin.style.left = levelCSS;
+  scaleLevelElem.style.width = levelCSS;
+};
+
+var setScaleValue = function(level) {
+  var value = Math.round(level);
+
+  scaleValueInput.value = value;
+
+  return value;
+};
+
+var resetScale = function() {
+  setScaleValue(SCALE_MAX);
+  setScaleLevel(SCALE_MAX);
+};
+
+scalePin.addEventListener('mousedown', function(evt) {
+  var startX = evt.clientX;
+
+  var onMouseMove = function(moveEvt) {
+    var shift = moveEvt.clientX - startX;
+    startX = moveEvt.clientX;
+
+    var scaleLevel = calcScaleLevel(shift);
+
+    if (scaleLevel >= SCALE_MIN && scaleLevel <= SCALE_MAX) {
+      setScaleLevel(scaleLevel);
+      applyImageEffect(currentEffect, setScaleValue(scaleLevel));
+    }
+
+  };
+
+  var onMouseUp = function() {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseMove);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+// --------------
+// Выбор и наложение эффекта на изображение
+// --------------
+var EFFECT_DEFAULT = 'heat';
+var EFFECT_LEVEL_DEFAULT = 100;
+
+var imgUpload = document.querySelector('.img-upload');
+var imgPreview = imgUpload.querySelector('.img-upload__preview img');
+var effectSelected = document.querySelector('.effects__radio:checked');
+var currentEffect = '';
+
+var applyImageEffect = function(effectName, effectLevel) {
+  if (typeof effectLevel === 'undefined') {
+    effectLevel = EFFECT_LEVEL_DEFAULT;
+  }
+
+  if (currentEffect) {
+    imgPreview.classList.remove('effects__preview--' + currentEffect);
+  }
+
+  imgPreview.classList.add('effects__preview--' + effectName);
+
+  if (effectName === 'none') {
+    hideScale();
+  } else {
+    showScale();
+  }
+
+  var filter = '';
+
+  switch (effectName) {
+    case 'chrome' :
+      filter = 'grayscale(' + (effectLevel / 100) + ')';
+      break;
+    case 'sepia' :
+      filter = 'sepia(' + (effectLevel / 100) + ')';
+      break;
+    case 'marvin' :
+      filter = 'invert(' + effectLevel + '%)';
+      break;
+    case 'phobos' :
+      filter = 'blur(' + (effectLevel * 5 / 100) + 'px)';
+      break;
+    case 'heat' :
+      filter = 'brightness(' + (effectLevel * 2 / 100 + 1) + ')';
+      break;
+  }
+
+  imgPreview.style.filter = filter;
+  currentEffect = effectName;
+};
+
+applyImageEffect(effectSelected.value);
+
+var effectControls = document.querySelector('.effects');
+
+effectControls.addEventListener('change', function(evt) {
+  applyImageEffect(evt.target.value);
+  resetScale();
+});
+
+// Общий сброс
+// --------------
+var resetImageEffect = function() {
+  resetScale();
+  applyImageEffect(EFFECT_DEFAULT);
+};

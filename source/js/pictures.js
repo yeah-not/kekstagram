@@ -48,7 +48,7 @@ var closeUploadPopup = function() {
   uploadPopup.classList.add('hidden');
 
   uploadForm.reset();
-  resetImageSize();
+  window.imageSize.reset();
   resetImageEffect();
 
   document.removeEventListener('keydown', onUploadPopupEscPress);
@@ -68,53 +68,6 @@ uploadFile.addEventListener('change', function() {
 uploadClose.addEventListener('click', function() {
   closeUploadPopup();
 });
-
-// --------------
-// Редактирование размера изображения
-// --------------
-
-var SIZE_MIN = 25;
-var SIZE_MAX = 100;
-var SIZE_STEP = 25;
-var SIZE_DEFAULT = 100;
-
-// Функции
-// --------------
-var resetImageSize = function() {
-  sizeValueInput.value = SIZE_DEFAULT;
-  imgPreview.style.transform = 'scale(' + SIZE_DEFAULT / 100 + ')';
-};
-
-var resizeImage = function(isDecrease) {
-  var size = parseInt(sizeValueInput.value, 10);
-
-  if (isDecrease && size > SIZE_MIN) {
-    size -= SIZE_STEP;
-  } else if (!isDecrease && size < SIZE_MAX) {
-    size += SIZE_STEP;
-  }
-
-  sizeValueInput.value = size + '%';
-  imgPreview.style.transform = 'scale(' + size / 100 + ')';
-};
-
-// Старт
-// --------------
-// var imgUpload = document.querySelector('.img-upload');
-// var imgPreview = imgUpload.querySelector('.img-upload__preview img');
-var sizeControls = document.querySelector('.img-upload__resize');
-var sizeMinus = sizeControls.querySelector('.resize__control--minus');
-var sizePlus = sizeControls.querySelector('.resize__control--plus');
-var sizeValueInput = sizeControls.querySelector('.resize__control--value');
-
-sizeMinus.addEventListener('click', function() {
-  resizeImage(true);
-});
-
-sizePlus.addEventListener('click', function() {
-  resizeImage(false);
-});
-
 
 // --------------
 // Валидация формы загрузки изображения

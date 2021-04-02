@@ -3,6 +3,7 @@
 // --------------
 // Попап загрузки изображения
 // --------------
+// Зависимости: util, upload-form, image-size, image-effect
 
 (function() {
   var popup = document.querySelector('.img-upload__overlay');

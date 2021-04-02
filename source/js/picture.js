@@ -3,6 +3,7 @@
 // --------------
 //  Миниатюра изображения
 // --------------
+// Зависимости: data, preview
 
 (function() {
   var template = window.data.template.querySelector('.picture__link');

@@ -3,6 +3,7 @@
 // --------------
 //  Галерея изображений
 // --------------
+// Зависимости: util, data, picture
 
 var pictures = document.querySelector('.pictures');
 var picturesData = window.data.generatePictures();

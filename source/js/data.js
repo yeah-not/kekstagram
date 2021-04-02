@@ -41,7 +41,7 @@
   window.data = {
     template: document.querySelector('#main-template').content,
     generatePictures: function(num) {
-      num = num || PICTURES_NUM;
+      num = num < PICTURES_NUM ? num : PICTURES_NUM;
 
       var pictures = [];
 

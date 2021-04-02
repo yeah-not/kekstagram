@@ -114,9 +114,19 @@
     });
   });
 
+  var resetErrors = function() {
+    var fieldsWithError = form.querySelectorAll('.input-error');
+
+    for (var i = 0; i < fieldsWithError.length; i++) {
+      fieldsWithError[i].setCustomValidity('');
+      fieldsWithError[i].classList.remove('input-error');
+    }
+  };
+
   window.uploadForm = {
     reset: function() {
       form.reset();
+      resetErrors();
     }
   };
 })();

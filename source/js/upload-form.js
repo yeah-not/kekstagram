@@ -70,14 +70,6 @@
     hashtagsInput.reportValidity();
   };
 
-  form.addEventListener('submit', function(evt) {
-    validateHashtagsInput();
-
-    if (!hashtagsInput.validity.valid) {
-      evt.preventDefault();
-    }
-  });
-
   var commentInput = form.querySelector('.text__description');
 
   var validateCommentInput = function() {
@@ -122,6 +114,24 @@
       fieldsWithError[i].classList.remove('input-error');
     }
   };
+
+  var onLoad = function(data) {
+    console.log(data);
+    window.upload.close();
+  };
+
+  var onError = function(error) {
+    console.log(error);
+  };
+
+  form.addEventListener('submit', function(evt) {
+    evt.preventDefault();
+    validateHashtagsInput();
+
+    if (hashtagsInput.validity.valid) {
+      window.backend.upload(new FormData(form), onLoad, onError);
+    }
+  });
 
   window.uploadForm = {
     reset: function() {

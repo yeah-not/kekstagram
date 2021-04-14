@@ -3,17 +3,21 @@
 // --------------
 //  Галерея изображений
 // --------------
-// Зависимости: util, data, backend, picture
+// Зависимости: util, data, message, backend, picture
 
-var pictures = document.querySelector('.pictures');
+(function() {
+  var ERROR_LOAD = 'Изображения не загружены. ';
 
-var onLoad = function(data) {
-  // data = window.data.generatePictures();
-  pictures.appendChild(window.util.renderFragment(data, window.picture.render));
-};
+  var pictures = document.querySelector('.pictures');
 
-var onError = function(error) {
-  console.log(error);
-};
+  var onLoad = function(data) {
+    // data = window.data.generatePictures();
+    pictures.appendChild(window.util.renderFragment(data, window.picture.render));
+  };
 
-window.backend.load(onLoad, onError);
+  var onError = function(error) {
+    window.message.show(ERROR_LOAD + error, 'error');
+  };
+
+  window.backend.load(onLoad, onError);
+})();

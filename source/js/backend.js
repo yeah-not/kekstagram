@@ -18,6 +18,10 @@
   var ERROR_TIMEOUT_PAST = ' мс';
   var ERROR_DEFAULT = 'Ошибка ';
 
+  var onErrorDefault = function(error) {
+    window.message.show(error, 'error');
+  };
+
   var createXHR = function(method, url, onLoad, onError, data, timeout) {
     var xhr = new XMLHttpRequest();
 
@@ -33,19 +37,19 @@
           onLoad(xhr.response);
           break;
         case 400:
-          error = ERROR_400 + xhr.status;
+          error = ERROR_400 + xhr.status + '.';
           break;
         case 401:
-          error = ERROR_401 + xhr.status;
+          error = ERROR_401 + xhr.status + '.';
           break;
         case 404:
-          error = ERROR_404 + xhr.status;
+          error = ERROR_404 + xhr.status + '.';
           break;
         case 500:
-          error = ERROR_500 + xhr.status;
+          error = ERROR_500 + xhr.status + '.';
           break;
         default:
-          error = ERROR_DEFAULT + xhr.status + ' ' + xhr.statusText;
+          error = ERROR_DEFAULT + xhr.status + ' ' + xhr.statusText + '.';
       }
 
       if (error) {
@@ -55,11 +59,11 @@
     });
 
     xhr.addEventListener('error', function() {
-      onError(ERROR_SERVER + xhr.status);
+      onError(ERROR_SERVER + xhr.status + '.');
     });
 
     xhr.addEventListener('timeout', function() {
-      onError(ERROR_TIMEOUT + xhr.timeout + ERROR_TIMEOUT_PAST);
+      onError(ERROR_TIMEOUT + xhr.timeout + ERROR_TIMEOUT_PAST + '.');
     });
 
     xhr.open(method, url);
@@ -72,6 +76,7 @@
       createXHR('GET', GET_URL, onLoad, onError);
     },
     upload: function(data, onLoad, onError) {
+      onError = onError || onErrorDefault;
       createXHR('POST', POST_URL, onLoad, onError, data);
     }
   };

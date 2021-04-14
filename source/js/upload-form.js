@@ -3,7 +3,7 @@
 // --------------
 // Валидация формы загрузки изображения
 // --------------
-// Зависимости: util
+// Зависимости: util, message, backend, upload
 
 (function() {
   var TAG_MAX_LENGTH = 20;
@@ -12,6 +12,7 @@
   var COMMENT_MIN_LENGTH = 20;
   var COMMENT_MAX_LENGTH = 140;
 
+  var SUCCESS_UPLOAD = 'Изображение загружено :)';
   var ERROR_NO_HASH = 'Хэш-тег должен начинаться с символа # (решётка)';
   var ERROR_ONLY_HASH = 'Хэш-тег не может состоять только из одной решётки';
   var ERROR_TAG_TOO_LONG = 'Максимальная длина одного хэш-тега ' + TAG_MAX_LENGTH + ' символов, включая решётку';
@@ -70,14 +71,6 @@
     hashtagsInput.reportValidity();
   };
 
-  form.addEventListener('submit', function(evt) {
-    validateHashtagsInput();
-
-    if (!hashtagsInput.validity.valid) {
-      evt.preventDefault();
-    }
-  });
-
   var commentInput = form.querySelector('.text__description');
 
   var validateCommentInput = function() {
@@ -122,6 +115,20 @@
       fieldsWithError[i].classList.remove('input-error');
     }
   };
+
+  var onLoad = function() {
+    window.message.show(SUCCESS_UPLOAD, 'success');
+    window.upload.close();
+  };
+
+  form.addEventListener('submit', function(evt) {
+    evt.preventDefault();
+    validateHashtagsInput();
+
+    if (hashtagsInput.validity.valid) {
+      window.backend.upload(new FormData(form), onLoad);
+    }
+  });
 
   window.uploadForm = {
     reset: function() {

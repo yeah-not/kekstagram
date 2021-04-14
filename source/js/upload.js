@@ -36,4 +36,8 @@
   popupClose.addEventListener('click', function() {
     close();
   });
+
+  window.upload = {
+    close: close
+  };
 })();

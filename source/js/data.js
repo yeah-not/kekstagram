@@ -27,12 +27,18 @@
     'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
     'Вот это тачка!',
   ];
+  var AUTHORS = ['Иван', 'Василий', 'Колян', 'Марья', 'Василиса', 'Елена', 'Аким', 'Тимур', 'Анна'];
+  var AVATARS_NUM = [1, 6];
 
   var generateComments = function(num) {
     var comments = [];
 
     for (var i = 0; i < num; i++) {
-      comments[i] = window.util.getRandomInt(0, 1) ? window.util.getRandomEl(COMMENTS) : window.util.getRandomEl(COMMENTS) + ' ' + window.util.getRandomEl(COMMENTS);
+      comments[i] = {
+        avatar: 'img/avatar-' + window.util.getRandomInt(AVATARS_NUM[0], AVATARS_NUM[1]) + '.svg',
+        message: window.util.getRandomInt(0, 1) ? window.util.getRandomEl(COMMENTS) : window.util.getRandomEl(COMMENTS) + ' ' + window.util.getRandomEl(COMMENTS),
+        name: window.util.getRandomEl(AUTHORS)
+      };
     }
 
     return comments;

@@ -25,6 +25,11 @@
 
       return array;
     },
+    removeChildren: function(element) {
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+    },
     renderFragment: function(data, renderItem) {
       var fragment = document.createDocumentFragment();
 

@@ -12,6 +12,10 @@
 
 <body>
 
+  <section class="message-panel">
+    <!-- Вывод информационных сообщений  -->
+  </section>
+
   <main>
 
     <section class="img-filters img-filters--inactive container">
@@ -146,7 +150,10 @@
         <div class="big-picture__social social">
           <div class="social__header">
             <img class="social__picture" src="img/avatar-1.svg" alt="Аватар автора фотографии" width="35" height="35">
-            <p class="social__caption"><!-- Описание фотографии --></p>
+            <div class="social__caption">
+              <p class="social__description"><!-- Описание фотографии --></p>
+              <p class="social__tags"><!-- Тэги фотографии --></p>
+            </div>
             <p class="social__likes">Нравится <span class="likes-count"><!-- Число --></span></p>
           </div>
           <div class="social__comment-count">5 из <span class="comments-count"><!-- Число --></span> комментариев</div>
@@ -191,7 +198,14 @@
   </footer>
 
   <template id="main-template">
-    <!-- picture -->
+    <!-- message-bar -->
+    <div class="message-bar"> <!-- модификаторы: default|error|success -->
+      <p class="message-bar__content">
+        <strong class="message-bar__label"><!-- Метка --></strong>
+        <span class="message-bar__text"><!-- Текст сообщения --></span>
+      </p>
+    </div>
+    <!-- picture__link -->
     <a href="#" class="picture__link">
       <img class="picture__img" src="" width="182" height="182" alt="Случайная фотография">
       <p class="picture__stats">
@@ -199,15 +213,21 @@
         <span class="picture__stat picture__stat--likes"></span>
       </p>
     </a>
-    <!-- social-comment -->
+    <!-- social__comment -->
     <li class="social__comment social__comment--text">
       <img class="social__picture" src="img/avatar-1.svg" alt="Аватар комментатора фотографии" width="35" height="35">
-      <p class="social__text"><!-- Текст комментария --></p>
+      <p>
+        <span class="social__text"><!-- Текст комментария --></span> &ndash;
+        <em class="social__author"><!-- Автор комментария --></em>
+      </p>
     </li>
   </template>
 
   <script src="js/util.min.js"></script>
   <script src="js/data.min.js"></script>
+  <script src="js/message.min.js"></script>
+  <script src="js/backend.min.js"></script>
+
   <script src="js/image-size.min.js"></script>
   <script src="js/image-effect.min.js"></script>
   <script src="js/preview.min.js"></script>

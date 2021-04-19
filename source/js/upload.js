@@ -3,7 +3,7 @@
 // --------------
 // Попап загрузки изображения
 // --------------
-// Зависимости: util, upload-form, image-size, image-effect
+// Зависимости: util
 
 (function() {
   var popup = document.querySelector('.img-upload__overlay');
@@ -21,12 +21,8 @@
 
   var close = function() {
     popup.classList.add('hidden');
-
-    window.uploadForm.reset();
-    window.imageSize.reset();
-    window.imageEffect.reset();
-
     document.removeEventListener('keydown', onEscPress);
+    window.upload.onClose();
   };
 
   popupOpen.addEventListener('change', function() {
@@ -38,6 +34,7 @@
   });
 
   window.upload = {
-    close: close
+    close: close,
+    onClose: function() {}
   };
 })();

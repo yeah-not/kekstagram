@@ -15,6 +15,8 @@
   };
 
   var open = function() {
+    window.upload.onOpen();
+
     document.addEventListener('keydown', onEscPress);
     popup.classList.remove('hidden');
   };
@@ -22,6 +24,7 @@
   var close = function() {
     popup.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
+
     window.upload.onClose();
   };
 
@@ -35,6 +38,7 @@
 
   window.upload = {
     close: close,
+    onOpen: function() {},
     onClose: function() {}
   };
 })();

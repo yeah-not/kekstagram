@@ -3,7 +3,7 @@
 // --------------
 // Валидация формы загрузки изображения
 // --------------
-// Зависимости: util, message, backend, upload
+// Зависимости: util, message, backend
 
 (function() {
   var TAG_MAX_LENGTH = 20;
@@ -118,7 +118,7 @@
 
   var onLoad = function() {
     window.message.show(SUCCESS_UPLOAD, 'success');
-    window.upload.close();
+    window.uploadForm.onSend();
   };
 
   form.addEventListener('submit', function(evt) {
@@ -134,6 +134,7 @@
     reset: function() {
       form.reset();
       resetErrors();
-    }
+    },
+    onSend: function() {}
   };
 })();

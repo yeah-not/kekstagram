@@ -10,11 +10,11 @@
   var SCALE_MAX = 100;
   var SCALE_DEFAULT = SCALE_MAX;
 
-  var scale = document.querySelector('.scale');
-  var scaleLine = scale.querySelector('.scale__line');
-  var scalePin = scale.querySelector('.scale__pin');
-  var scaleLevelElem = scale.querySelector('.scale__level');
-  var scaleValueInput = scale.querySelector('.scale__value');
+  var scaleElem = document.querySelector('.scale');
+  var scaleLine = scaleElem.querySelector('.scale__line');
+  var scalePin = scaleElem.querySelector('.scale__pin');
+  var scaleLevelElem = scaleElem.querySelector('.scale__level');
+  var scaleValueInput = scaleElem.querySelector('.scale__value');
 
   var calcScaleLevel = function(shift) {
     var pinLeft = scalePin.offsetLeft + shift;
@@ -49,7 +49,7 @@
 
       if (scaleLevel >= SCALE_MIN && scaleLevel <= SCALE_MAX) {
         setScaleLevel(scaleLevel);
-        window.scale.onChange(setScaleValue(scaleLevel));
+        scale.onChange(setScaleValue(scaleLevel));
       }
 
     };
@@ -63,17 +63,21 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  window.scale = {
+  var scale = {
     show: function() {
-      scale.classList.remove('hidden');
+      scaleElem.classList.remove('hidden');
     },
     hide: function() {
-      scale.classList.add('hidden');
+      scaleElem.classList.add('hidden');
     },
     reset: function() {
       setScaleValue(SCALE_DEFAULT);
       setScaleLevel(SCALE_DEFAULT);
     },
-    onChange: function() {}
+    onChange: function(level) {
+      return level;
+    }
   };
+
+  window.scale = scale;
 })();

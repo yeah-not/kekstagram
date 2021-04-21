@@ -118,7 +118,7 @@
 
   var onLoad = function() {
     window.message.show(SUCCESS_UPLOAD, 'success');
-    window.uploadForm.onSend();
+    uploadForm.onSend();
   };
 
   form.addEventListener('submit', function(evt) {
@@ -130,11 +130,13 @@
     }
   });
 
-  window.uploadForm = {
+  var uploadForm = {
     reset: function() {
       form.reset();
       resetErrors();
     },
     onSend: function() {}
   };
+
+  window.uploadForm = uploadForm;
 })();

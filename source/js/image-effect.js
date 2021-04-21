@@ -47,22 +47,26 @@
     image.style.filter = filter;
     currentEffect = effect;
 
-    window.imageEffect.onApply(effect);
+    imageEffect.onApply(effect);
   };
 
   var effectControls = document.querySelector('.effects');
 
   effectControls.addEventListener('change', function(evt) {
     apply(EFFECT_LEVEL_DEFAULT, evt.target.value);
-    window.imageEffect.onSwitch();
+    imageEffect.onSwitch();
   });
 
-  window.imageEffect = {
+  var imageEffect = {
     apply: apply,
     reset: function() {
       currentEffect = '';
     },
     onSwitch: function() {},
-    onApply: function() {}
+    onApply: function(effect) {
+      return effect;
+    }
   };
+
+  window.imageEffect = imageEffect;
 })();

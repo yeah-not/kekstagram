@@ -17,7 +17,7 @@
       level = EFFECT_LEVEL_DEFAULT;
     }
 
-    effect = effect || EFFECT_DEFAULT;
+    effect = effect || currentEffect || EFFECT_DEFAULT;
 
     if (currentEffect && currentEffect !== effect) {
       image.classList.remove('effects__preview--' + currentEffect);
@@ -59,6 +59,9 @@
 
   window.imageEffect = {
     apply: apply,
+    reset: function() {
+      currentEffect = '';
+    },
     onSwitch: function() {},
     onApply: function() {}
   };

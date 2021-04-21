@@ -3,9 +3,12 @@
 // --------------
 //  Вывод информационных сообщений
 // --------------
-// Зависимости: data
+// Зависимости: util, data
 
 (function() {
+  var TIMEOUT_HIDE = 3000;
+  var TIMEOUT_HIDE_ANIMATION = 500;
+
   var template = window.data.template.querySelector('.message-bar');
   var panel = document.querySelector('.message-panel');
 
@@ -14,7 +17,7 @@
 
     setTimeout(function() {
       message.remove();
-    }, 500);
+    }, TIMEOUT_HIDE_ANIMATION);
   };
 
   window.message = {
@@ -53,7 +56,7 @@
 
       panel.appendChild(message);
 
-      setTimeout(hide, 3000, message);
+      setTimeout(hide, TIMEOUT_HIDE, message);
     }
   };
 })();

@@ -3,7 +3,7 @@
 // --------------
 //  Взаимодействие с сервером
 // --------------
-// Зависимости: нет
+// Зависимости: message
 
 (function() {
   var POST_URL = 'https://23.javascript.pages.academy/kekstagram';

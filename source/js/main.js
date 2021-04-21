@@ -12,6 +12,7 @@
   window.upload.onClose = function() {
     window.uploadForm.reset();
     window.scale.reset();
+    window.imageEffect.reset();
     window.imageSize.reset();
   };
 

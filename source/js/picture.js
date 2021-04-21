@@ -3,7 +3,7 @@
 // --------------
 //  Миниатюра изображения
 // --------------
-// Зависимости: data, preview
+// Зависимости: data
 
 (function() {
   var template = window.data.template.querySelector('.picture__link');
@@ -15,10 +15,6 @@
       picture.querySelector('.picture__img').src = data.url;
       picture.querySelector('.picture__stat--likes').textContent = data.likes;
       picture.querySelector('.picture__stat--comments').textContent = data.comments.length;
-
-      picture.addEventListener('click', function() {
-        window.preview.open(data);
-      });
 
       return picture;
     }

@@ -30,11 +30,18 @@
         element.removeChild(element.firstChild);
       }
     },
-    renderFragment: function(data, renderItem) {
+    renderFragment: function(data, renderItem, itemListener) {
       var fragment = document.createDocumentFragment();
+      var item = null;
 
       for (var i = 0; i < data.length; i++) {
-        fragment.appendChild(renderItem(data[i]));
+        item = renderItem(data[i]);
+
+        if (itemListener) {
+          itemListener(item, data[i]);
+        }
+
+        fragment.appendChild(item);
       }
 
       return fragment;

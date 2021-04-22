@@ -62,7 +62,7 @@
 
     if (activeFilter) {
       toggleFilter(activeFilter);
-      filterToAction[activeFilter.id]();
+      window.debounce(filterToAction[activeFilter.id]);
     }
   });
 

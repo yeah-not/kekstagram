@@ -11,7 +11,13 @@
   var popup = document.querySelector('.big-picture');
   var popupClose = popup.querySelector('.big-picture__cancel');
   var commentsList = popup.querySelector('.social__comments');
+  var commentsCount = popup.querySelector('.social__comment-count');
+  var commentsLoaded = commentsCount.querySelector('.comments-loaded');
+  var commentsLoadMore = popup.querySelector('.social__comment-loadmore');
   var commentTemplate = window.data.template.querySelector('.social__comment');
+
+  var commentsLast = [];
+  var commentsNum = 0;
 
   var renderComment = function(data) {
     var comment = commentTemplate.cloneNode(true);
@@ -21,6 +27,24 @@
     comment.querySelector('.social__author').textContent = data.name;
 
     return comment;
+  };
+
+  var renderComments = function(comments) {
+    if (comments) {
+      commentsLast = comments;
+      commentsNum = 0;
+      window.util.removeChildren(commentsList);
+    }
+
+    var commentsCurrent = commentsLast.splice(0, COMMENTS_PER_PAGE);
+    commentsNum += commentsCurrent.length;
+
+    commentsList.appendChild(window.util.renderFragment(commentsCurrent, renderComment));
+    commentsLoaded.innerText = commentsNum;
+
+    if (commentsLast.length === 0) {
+      commentsLoadMore.classList.add('visually-hidden');
+    }
   };
 
   var render = function(data) {
@@ -47,11 +71,17 @@
     popup.querySelector('.social__description').textContent = description.trim();
     popup.querySelector('.social__tags').textContent = tags.trim();
 
-    var comments = data.comments.slice(0, COMMENTS_PER_PAGE);
+    renderComments(data.comments.slice());
 
-    window.util.removeChildren(commentsList);
-    commentsList.appendChild(window.util.renderFragment(comments, renderComment));
+    if (data.comments.length > COMMENTS_PER_PAGE) {
+      commentsCount.classList.remove('visually-hidden');
+      commentsLoadMore.classList.remove('visually-hidden');
+    }
   };
+
+  commentsLoadMore.addEventListener('click', function() {
+    renderComments();
+  });
 
   var onEscPress = function(evt) {
     window.util.isEscEvent(evt, close);

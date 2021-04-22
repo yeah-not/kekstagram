@@ -32,19 +32,18 @@
         element.removeChild(element.querySelector(childSelector));
       }
     },
-    renderFragment: function(data, renderItem, itemListener) {
+    renderFragment: function(data, renderItem, itemHandler) {
       var fragment = document.createDocumentFragment();
-      var item = null;
 
-      for (var i = 0; i < data.length; i++) {
-        item = renderItem(data[i]);
+      data.forEach(function(itemData) {
+        var item = renderItem(itemData);
 
-        if (itemListener) {
-          itemListener(item, data[i]);
+        if (itemHandler) {
+          itemHandler(item, itemData);
         }
 
         fragment.appendChild(item);
-      }
+      });
 
       return fragment;
     },

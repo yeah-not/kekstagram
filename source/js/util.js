@@ -25,9 +25,11 @@
 
       return array;
     },
-    removeChildren: function(element) {
-      while (element.firstChild) {
-        element.removeChild(element.firstChild);
+    removeChildren: function(element, childSelector) {
+      childSelector = childSelector || '*';
+
+      while (element.querySelector(childSelector)) {
+        element.removeChild(element.querySelector(childSelector));
       }
     },
     renderFragment: function(data, renderItem, itemListener) {

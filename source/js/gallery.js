@@ -15,14 +15,14 @@
   var render = function(data) {
     data = data || picturesData;
 
-    var onPictureClick = function(picture, pictureData) {
+    var pictureClickHandler = function(picture, pictureData) {
       picture.addEventListener('click', function() {
         window.preview.open(pictureData);
       });
     };
 
-    window.util.removeChildren(pictures);
-    pictures.appendChild(window.util.renderFragment(data, window.picture.render, onPictureClick));
+    window.util.removeChildren(pictures, window.picture.selector);
+    pictures.appendChild(window.util.renderFragment(data, window.picture.render, pictureClickHandler));
   };
 
   var renderNew = function() {

@@ -16,6 +16,15 @@
   font-display: swap;
 }
 
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -1085,6 +1094,7 @@ main {
 .social__comment-loadmore {
   position: relative;
   color: #3b77c0;
+  cursor: pointer;
 }
 
 .social__comment-loadmore::after {
@@ -1097,6 +1107,10 @@ main {
   height: 23px;
 
   background-image: url("../img/spinner-blue.svg");
+}
+
+.social__comment-loadmore:active::after {
+  animation: rotation 2s linear infinite;
 }
 
 .social__comment--text {

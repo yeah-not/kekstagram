@@ -7,39 +7,69 @@
 
 (function() {
   var ERROR_LOAD = 'Изображения не загружены. ';
+  var NEW_AMOUNT = 10;
 
   var pictures = document.querySelector('.pictures');
+  var picturesData = [];
 
   var render = function(data) {
-    // data = window.data.generatePictures();
-    // Вариант 1 - IIFE-обход потери окружения
-    var fragment = document.createDocumentFragment();
+    window.util.removeChildren(pictures);
 
-    for (var i = 0; i < data.length; i++) {
-      var picture = window.picture.render(data[i]);
+    var onPictureClick = function(picture, pictureData) {
+      picture.addEventListener('click', function() {
+        window.preview.open(pictureData);
+      });
+    };
 
-      (function(pictureElem, pictureData) {
-        pictureElem.addEventListener('click', function() {
-          window.preview.open(pictureData);
-        });
-      })(picture, data[i]);
+    pictures.appendChild(window.util.renderFragment(data, window.picture.render, onPictureClick));
+  };
 
-      fragment.appendChild(picture);
+  var filters = document.querySelector('.img-filters');
+  var filterBtns = filters.querySelectorAll('.img-filters__button');
+  var filterPopular = filters.querySelector('#filter-popular');
+  var filterNew = filters.querySelector('#filter-new');
+  var filterDiscussed = filters.querySelector('#filter-discussed');
+
+  filters.addEventListener('click', function(evt) {
+    var activeFilter = evt.target.classList.contains('img-filters__button') ? evt.target : null;
+
+    if (activeFilter) {
+      [].forEach.call(filterBtns, function(filterBtn) {
+        filterBtn.classList.remove('img-filters__button--active');
+      });
+
+      activeFilter.classList.add('img-filters__button--active');
     }
+  });
 
-    // Вариант 2 - обработчик передается как callback
-    // var onPictureClick = function(picture, data) {
-    //   picture.addEventListener('click', function() {
-    //     window.preview.open(data);
-    //   });
-    // }
-    //
-    // var fragment = window.util.renderFragment(data, window.picture.render, onPictureClick)
-    pictures.appendChild(fragment);
+  filterPopular.addEventListener('click', function() {
+    render(picturesData);
+  });
+
+  filterNew.addEventListener('click', function() {
+    var picturesDataRandom = window.util.shuffle(picturesData.slice());
+    render(picturesDataRandom.slice(0, NEW_AMOUNT));
+  });
+
+  filterDiscussed.addEventListener('click', function() {
+    var picturesDataSorted = picturesData
+      .slice()
+      .sort(function(a, b) {
+        return b.comments.length - a.comments.length;
+      });
+
+    render(picturesDataSorted);
+  });
+
+  var showFilters = function() {
+    filters.classList.remove('img-filters--inactive');
   };
 
   var onLoad = function(data) {
-    render(data);
+    picturesData = data;
+
+    render(picturesData);
+    showFilters();
   };
 
   var onError = function(error) {

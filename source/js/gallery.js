@@ -13,7 +13,7 @@
   var picturesData = [];
 
   var render = function(data) {
-    window.util.removeChildren(pictures);
+    data = data || picturesData;
 
     var onPictureClick = function(picture, pictureData) {
       picture.addEventListener('click', function() {
@@ -21,37 +21,16 @@
       });
     };
 
+    window.util.removeChildren(pictures);
     pictures.appendChild(window.util.renderFragment(data, window.picture.render, onPictureClick));
   };
 
-  var filters = document.querySelector('.img-filters');
-  var filterBtns = filters.querySelectorAll('.img-filters__button');
-  var filterPopular = filters.querySelector('#filter-popular');
-  var filterNew = filters.querySelector('#filter-new');
-  var filterDiscussed = filters.querySelector('#filter-discussed');
-
-  filters.addEventListener('click', function(evt) {
-    var activeFilter = evt.target.classList.contains('img-filters__button') ? evt.target : null;
-
-    if (activeFilter) {
-      [].forEach.call(filterBtns, function(filterBtn) {
-        filterBtn.classList.remove('img-filters__button--active');
-      });
-
-      activeFilter.classList.add('img-filters__button--active');
-    }
-  });
-
-  filterPopular.addEventListener('click', function() {
-    render(picturesData);
-  });
-
-  filterNew.addEventListener('click', function() {
+  var renderNew = function() {
     var picturesDataRandom = window.util.shuffle(picturesData.slice());
     render(picturesDataRandom.slice(0, NEW_AMOUNT));
-  });
+  };
 
-  filterDiscussed.addEventListener('click', function() {
+  var renderDiscussed = function() {
     var picturesDataSorted = picturesData
       .slice()
       .sort(function(a, b) {
@@ -59,6 +38,32 @@
       });
 
     render(picturesDataSorted);
+  };
+
+  var filters = document.querySelector('.img-filters');
+  var filterBtns = filters.querySelectorAll('.img-filters__button');
+
+  var filterToAction = {
+    'filter-popular': render,
+    'filter-new': renderNew,
+    'filter-discussed': renderDiscussed
+  };
+
+  var toggleFilter = function(filter) {
+    [].forEach.call(filterBtns, function(filterBtn) {
+      filterBtn.classList.remove('img-filters__button--active');
+    });
+
+    filter.classList.add('img-filters__button--active');
+  };
+
+  filters.addEventListener('click', function(evt) {
+    var activeFilter = evt.target.classList.contains('img-filters__button') ? evt.target : null;
+
+    if (activeFilter) {
+      toggleFilter(activeFilter);
+      filterToAction[activeFilter.id]();
+    }
   });
 
   var showFilters = function() {
@@ -67,8 +72,7 @@
 
   var onLoad = function(data) {
     picturesData = data;
-
-    render(picturesData);
+    render();
     showFilters();
   };
 

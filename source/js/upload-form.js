@@ -13,14 +13,17 @@
   var COMMENT_MAX_LENGTH = 140;
 
   var SUCCESS_UPLOAD = 'Изображение загружено :)';
-  var ERROR_NO_HASH = 'Хэш-тег должен начинаться с символа # (решётка)';
-  var ERROR_ONLY_HASH = 'Хэш-тег не может состоять только из одной решётки';
-  var ERROR_TAG_TOO_LONG = 'Максимальная длина одного хэш-тега ' + TAG_MAX_LENGTH + ' символов, включая решётку';
-  var ERROR_TAG_NOT_UNIQUE = 'Один и тот же хэш-тег не может быть использован дважды';
-  var ERROR_TAGS_PATTERN = 'Хэш-теги разделяются пробелами. Используются буквы, цифры, символы "-", "_"';
-  var ERROR_TAGS_NUM = 'Можно указать не больше ' + TAGS_MAX_NUM + ' хэш-тегов';
-  var ERROR_COMMENT_TOO_SHORT = 'Минимальная длина комментария ' + COMMENT_MIN_LENGTH + ' cимволов, хотя он и не обязателен;)';
-  var ERROR_COMMENT_TOO_LONG = 'Максимальная длина комментария ' + COMMENT_MAX_LENGTH + ' cимволов, хотя он и не обязателен;)';
+
+  var Error = {
+    NO_HASH: 'Хэш-тег должен начинаться с символа # (решётка)',
+    ONLY_HASH: 'Хэш-тег не может состоять только из одной решётки',
+    TAG_TOO_LONG: 'Максимальная длина одного хэш-тега ' + TAG_MAX_LENGTH + ' символов, включая решётку',
+    TAG_NOT_UNIQUE: 'Один и тот же хэш-тег не может быть использован дважды',
+    TAGS_PATTERN: 'Хэш-теги разделяются пробелами. Используются буквы, цифры, символы "-", "_"',
+    TAGS_NUM: 'Можно указать не больше ' + TAGS_MAX_NUM + ' хэш-тегов',
+    COMMENT_TOO_SHORT: 'Минимальная длина комментария ' + COMMENT_MIN_LENGTH + ' cимволов, хотя он и не обязателен,)',
+    COMMENT_TOO_LONG: 'Максимальная длина комментария ' + COMMENT_MAX_LENGTH + ' cимволов, хотя он и не обязателен,)'
+  };
 
   var form = document.querySelector('.img-upload__form');
   var hashtagsInput = form.querySelector('.text__hashtags');
@@ -31,13 +34,13 @@
     var errorMsg = '';
 
     if (firstChar !== '#') {
-      errorMsg = ERROR_NO_HASH;
+      errorMsg = Error.NO_HASH;
     } else if (firstChar === '#' && hashtag.length === 1) {
-      errorMsg = ERROR_ONLY_HASH;
+      errorMsg = Error.ONLY_HASH;
     } else if (hashtag.length > TAG_MAX_LENGTH) {
-      errorMsg = ERROR_TAG_TOO_LONG;
+      errorMsg = Error.TAG_TOO_LONG;
     } else if (tagCloneIndex > 0) {
-      errorMsg = ERROR_TAG_NOT_UNIQUE;
+      errorMsg = Error.TAG_NOT_UNIQUE;
     } else {
       errorMsg = '';
     }
@@ -55,9 +58,9 @@
     });
 
     if (tagsStr.match(TAGS_PATTERN)) {
-      errorMsg = ERROR_TAGS_PATTERN;
+      errorMsg = Error.TAGS_PATTERN;
     } else if (tags.length > TAGS_MAX_NUM) {
-      errorMsg = ERROR_TAGS_NUM;
+      errorMsg = Error.TAGS_NUM;
     } else {
       for (var i = 0; i < tags.length; i++) {
         errorMsg = validateHashtag(tags[i], i, tags);
@@ -75,9 +78,9 @@
 
   var validateCommentInput = function() {
     if (commentInput.validity.tooShort) {
-      commentInput.setCustomValidity(ERROR_COMMENT_TOO_SHORT);
+      commentInput.setCustomValidity(Error.COMMENT_TOO_SHORT);
     } else if (commentInput.validity.tooLong) {
-      commentInput.setCustomValidity(ERROR_COMMENT_TOO_LONG);
+      commentInput.setCustomValidity(Error.COMMENT_TOO_LONG);
     } else {
       commentInput.setCustomValidity('');
     }
@@ -110,10 +113,10 @@
   var resetErrors = function() {
     var fieldsWithError = form.querySelectorAll('.input-error');
 
-    for (var i = 0; i < fieldsWithError.length; i++) {
-      fieldsWithError[i].setCustomValidity('');
-      fieldsWithError[i].classList.remove('input-error');
-    }
+    Array.from(fieldsWithError).forEach(function(field) {
+      field.setCustomValidity('');
+      field.classList.remove('input-error');
+    });
   };
 
   var onLoad = function() {

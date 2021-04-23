@@ -25,26 +25,35 @@
 
       return array;
     },
-    removeChildren: function(element) {
-      while (element.firstChild) {
-        element.removeChild(element.firstChild);
+    removeChildren: function(element, childSelector) {
+      childSelector = childSelector || '*';
+
+      while (element.querySelector(childSelector)) {
+        element.removeChild(element.querySelector(childSelector));
       }
     },
-    renderFragment: function(data, renderItem, itemListener) {
-      var fragment = document.createDocumentFragment();
-      var item = null;
+    renderFragment: function(data, renderItem, itemHandler) {
+      var fragment = data.reduce(function(accumlator, itemData) {
+        var item = renderItem(itemData);
 
-      for (var i = 0; i < data.length; i++) {
-        item = renderItem(data[i]);
-
-        if (itemListener) {
-          itemListener(item, data[i]);
+        if (itemHandler) {
+          itemHandler(item, itemData);
         }
 
-        fragment.appendChild(item);
-      }
+        accumlator.appendChild(item);
+
+        return accumlator;
+      }, document.createDocumentFragment());
 
       return fragment;
+    },
+    show: function(element, visually) {
+      var className = visually ? 'visually-hidden' : 'hidden';
+      element.classList.remove(className);
+    },
+    hide: function(element, visually) {
+      var className = visually ? 'visually-hidden' : 'hidden';
+      element.classList.add(className);
     },
     isEscEvent: function(evt, action) {
       if (evt.code === 'Escape') {

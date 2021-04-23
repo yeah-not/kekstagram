@@ -6,7 +6,7 @@
 // Зависимости: util, data, message, backend, picture, preview
 
 (function() {
-  var ERROR_LOAD = 'Изображения не загружены. ';
+  var ERROR_LOAD = 'Изображения не загружены.';
   var NEW_AMOUNT = 10;
 
   var pictures = document.querySelector('.pictures');
@@ -15,14 +15,14 @@
   var render = function(data) {
     data = data || picturesData;
 
-    var onPictureClick = function(picture, pictureData) {
+    var pictureClickHandler = function(picture, pictureData) {
       picture.addEventListener('click', function() {
         window.preview.open(pictureData);
       });
     };
 
-    window.util.removeChildren(pictures);
-    pictures.appendChild(window.util.renderFragment(data, window.picture.render, onPictureClick));
+    window.util.removeChildren(pictures, window.picture.selector);
+    pictures.appendChild(window.util.renderFragment(data, window.picture.render, pictureClickHandler));
   };
 
   var renderNew = function() {
@@ -77,7 +77,7 @@
   };
 
   var onError = function(error) {
-    window.message.show(ERROR_LOAD + error, 'error');
+    window.message.show(ERROR_LOAD + ' ' + error, 'error');
   };
 
   window.backend.load(onLoad, onError);

@@ -13,10 +13,7 @@
   var currentEffect = '';
 
   var apply = function(level, effect) {
-    if (isNaN(level)) {
-      level = EFFECT_LEVEL_DEFAULT;
-    }
-
+    level = level >= 0 ? level : EFFECT_LEVEL_DEFAULT;
     effect = effect || currentEffect || EFFECT_DEFAULT;
 
     if (currentEffect && currentEffect !== effect) {
@@ -24,27 +21,15 @@
       image.classList.add('effects__preview--' + effect);
     }
 
-    var filter = '';
+    var effectToFilter = {
+      'chrome': 'grayscale(' + (level / 100) + ')',
+      'sepia': 'sepia(' + (level / 100) + ')',
+      'marvin': 'invert(' + level + '%)',
+      'phobos': 'blur(' + (level * 5 / 100) + 'px)',
+      'heat': 'brightness(' + (level * 2 / 100 + 1) + ')'
+    };
 
-    switch (effect) {
-      case 'chrome' :
-        filter = 'grayscale(' + (level / 100) + ')';
-        break;
-      case 'sepia' :
-        filter = 'sepia(' + (level / 100) + ')';
-        break;
-      case 'marvin' :
-        filter = 'invert(' + level + '%)';
-        break;
-      case 'phobos' :
-        filter = 'blur(' + (level * 5 / 100) + 'px)';
-        break;
-      case 'heat' :
-        filter = 'brightness(' + (level * 2 / 100 + 1) + ')';
-        break;
-    }
-
-    image.style.filter = filter;
+    image.style.filter = effectToFilter[effect] || '';
     currentEffect = effect;
 
     imageEffect.onApply(effect);

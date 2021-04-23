@@ -6,9 +6,11 @@
 // Зависимости: data
 
 (function() {
-  var template = window.data.template.querySelector('.picture__link');
+  var selector = '.picture__link';
+  var template = window.data.template.querySelector(selector);
 
   window.picture = {
+    selector: selector,
     render: function(data) {
       var picture = template.cloneNode(true);
 

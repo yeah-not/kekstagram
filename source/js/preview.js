@@ -43,7 +43,7 @@
     commentsLoaded.innerText = commentsNum;
 
     if (commentsLast.length === 0) {
-      commentsLoadMore.classList.add('visually-hidden');
+      window.util.hide(commentsLoadMore, true);
     }
   };
 
@@ -51,8 +51,6 @@
     popup.querySelector('.big-picture__img img').src = data.url;
     popup.querySelector('.likes-count').textContent = data.likes;
     popup.querySelector('.comments-count').textContent = data.comments.length;
-    popup.querySelector('.social__comment-count').classList.add('visually-hidden');
-    popup.querySelector('.social__comment-loadmore').classList.add('visually-hidden');
 
     var caption = data.description.trim();
     var captionArr = caption.split(/(#.*)/);
@@ -73,9 +71,9 @@
 
     renderComments(data.comments.slice());
 
-    if (data.comments.length > COMMENTS_PER_PAGE) {
-      commentsCount.classList.remove('visually-hidden');
-      commentsLoadMore.classList.remove('visually-hidden');
+    if (data.comments.length < COMMENTS_PER_PAGE) {
+      window.util.hide(commentsCount, true);
+      window.util.hide(commentsLoadMore, true);
     }
   };
 
@@ -88,7 +86,10 @@
   };
 
   var close = function() {
-    popup.classList.add('hidden');
+    window.util.hide(popup);
+    window.util.show(commentsCount, true);
+    window.util.show(commentsLoadMore, true);
+
     document.removeEventListener('keydown', onEscPress);
   };
 
@@ -100,7 +101,7 @@
     open: function(data) {
       render(data);
       document.addEventListener('keydown', onEscPress);
-      popup.classList.remove('hidden');
+      window.util.show(popup);
     }
   };
 })();

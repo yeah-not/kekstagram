@@ -6,7 +6,7 @@
 // Зависимости: util, data, message, backend, picture, preview
 
 (function() {
-  var ERROR_LOAD = 'Изображения не загружены. ';
+  var ERROR_LOAD = 'Изображения не загружены.';
   var NEW_AMOUNT = 10;
 
   var pictures = document.querySelector('.pictures');
@@ -77,7 +77,7 @@
   };
 
   var onError = function(error) {
-    window.message.show(ERROR_LOAD + error, 'error');
+    window.message.show(ERROR_LOAD + ' ' + error, 'error');
   };
 
   window.backend.load(onLoad, onError);

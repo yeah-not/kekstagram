@@ -16,15 +16,13 @@
 
   var open = function() {
     upload.onOpen();
-
     document.addEventListener('keydown', onEscPress);
-    popup.classList.remove('hidden');
+    window.util.show(popup);
   };
 
   var close = function() {
-    popup.classList.add('hidden');
+    window.util.hide(popup);
     document.removeEventListener('keydown', onEscPress);
-
     upload.onClose();
   };
 

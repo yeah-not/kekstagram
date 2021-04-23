@@ -33,19 +33,27 @@
       }
     },
     renderFragment: function(data, renderItem, itemHandler) {
-      var fragment = document.createDocumentFragment();
-
-      data.forEach(function(itemData) {
+      var fragment = data.reduce(function(accumlator, itemData) {
         var item = renderItem(itemData);
 
         if (itemHandler) {
           itemHandler(item, itemData);
         }
 
-        fragment.appendChild(item);
-      });
+        accumlator.appendChild(item);
+
+        return accumlator;
+      }, document.createDocumentFragment());
 
       return fragment;
+    },
+    show: function(element, visually) {
+      var className = visually ? 'visually-hidden' : 'hidden';
+      element.classList.remove(className);
+    },
+    hide: function(element, visually) {
+      var className = visually ? 'visually-hidden' : 'hidden';
+      element.classList.add(className);
     },
     isEscEvent: function(evt, action) {
       if (evt.code === 'Escape') {

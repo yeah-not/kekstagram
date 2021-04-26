@@ -6,9 +6,13 @@
 // Зависимости: util
 
 (function() {
+  var FILE_TYPES = ['image/jpeg', 'image/png'];
+  var ERROR_MISS_TYPE = 'Поддерживаются форматы JPG и PNG';
+
   var popup = document.querySelector('.img-upload__overlay');
   var popupClose = popup.querySelector('.img-upload__cancel');
-  var popupOpen = document.querySelector('#upload-file');
+  var image = popup.querySelector('.img-upload__preview img');
+  var fileChooser = document.querySelector('#upload-file');
 
   var onEscPress = function(evt) {
     window.util.isEscEvent(evt, close);
@@ -26,8 +30,25 @@
     upload.onClose();
   };
 
-  popupOpen.addEventListener('change', function() {
-    open();
+  fileChooser.addEventListener('change', function() {
+    var file = fileChooser.files[0];
+
+    var matches = FILE_TYPES.some(function(it) {
+      return file.type === it;
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function() {
+        image.src = reader.result;
+        open();
+      });
+
+      reader.readAsDataURL(file);
+    } else {
+      window.message.show(ERROR_MISS_TYPE, 'error');
+    }
   });
 
   popupClose.addEventListener('click', function() {

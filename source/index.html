@@ -52,7 +52,7 @@
               </div>
             </div>
 
-            <div class="img-upload__overlay hidden">
+            <div class="img-upload__overlay popup hidden">
               <div class="img-upload__wrapper">
                 <div class="img-upload__preview-container">
 
@@ -74,7 +74,7 @@
                     </div>
                   </fieldset>
 
-                  <button type="reset" class="img-upload__cancel cancel" id="upload-cancel">Закрыть</button>
+                  <button type="reset" class="img-upload__cancel popup__close" id="upload-cancel">Закрыть</button>
                 </div>
 
                 <fieldset class="img-upload__effects effects">
@@ -139,7 +139,7 @@
       <!-- Фотографии других участников (шаблон #picture) -->
     </section>
 
-    <section class="big-picture overlay hidden">
+    <section class="big-picture popup hidden">
       <h2 class="big-picture__title visually-hidden">Просмотр фотографии</h2>
       <div class="big-picture__preview">
 
@@ -167,7 +167,7 @@
             <button type="button" class="social__footer-btn" name="button">Отправить</button>
           </div>
         </div>
-        <button type="reset" class="big-picture__cancel cancel" id="picture-cancel">Закрыть</button>
+        <button type="reset" class="big-picture__cancel popup__close" id="picture-cancel">Закрыть</button>
       </div>
     </section>
 
@@ -228,6 +228,7 @@
   <script src="js/debounce.min.js"></script>
   <script src="js/message.min.js"></script>
   <script src="js/backend.min.js"></script>
+  <script src="js/popup.min.js"></script>
   <script src="js/scale.min.js"></script>
 
   <script src="js/image-size.min.js"></script>

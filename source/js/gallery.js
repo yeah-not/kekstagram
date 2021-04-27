@@ -17,7 +17,7 @@
 
     var pictureClickHandler = function(picture, pictureData) {
       picture.addEventListener('click', function() {
-        window.preview.open(pictureData);
+        window.preview.show(pictureData);
       });
     };
 

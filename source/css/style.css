@@ -88,10 +88,28 @@ main {
   box-shadow: 0 0 7px 3px red;
 }
 
+/* Оверлей */
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+  padding-top: 60px;
+  overflow: auto;
+
+  background-color: rgba(0, 0, 0, 0.8);
+}
 
 /* Кнопка закрытия */
 
-.cancel {
+.popup__close {
   display: block;
   margin: 0;
   padding: 0;
@@ -112,36 +130,16 @@ main {
   opacity: 0.6;
 }
 
-.cancel:hover,
-.cancel:focus {
+.popup__close:hover,
+.popup__close:focus {
   background-color: rgba(255, 255, 255, 0.4);
   opacity: 1;
 }
 
-.cancel:active {
+.popup__close:active {
   -webkit-transform: translateY(1px);
       -ms-transform: translateY(1px);
           transform: translateY(1px);
-}
-
-
-/* Оверлей */
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 2;
-
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-
-  width: 100%;
-  height: 100%;
-  padding-top: 60px;
-  overflow: auto;
-
-  background-color: rgba(0, 0, 0, 0.8);
 }
 
 
@@ -557,22 +555,7 @@ main {
 /* Редактирование фотографии img-upload__overlay */
 
 .img-upload__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 2;
-
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-
-  width: 100%;
-  height: 100%;
-
-  padding-top: 60px;
   padding-bottom: 60px;
-  overflow: auto;
-
-  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .img-upload__preview-container {

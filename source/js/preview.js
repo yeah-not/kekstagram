@@ -3,17 +3,17 @@
 // --------------
 // Просмотр изображения в полноэкранном режиме
 // --------------
-// Зависимости: util, data
+// Зависимости: util, data, popup
 
 (function() {
   var COMMENTS_PER_PAGE = 5;
+  var SELECTOR = '.big-picture';
 
-  var popup = document.querySelector('.big-picture');
-  var popupClose = popup.querySelector('.big-picture__cancel');
-  var commentsList = popup.querySelector('.social__comments');
-  var commentsCount = popup.querySelector('.social__comment-count');
+  var previewElem = document.querySelector(SELECTOR);
+  var commentsList = previewElem.querySelector('.social__comments');
+  var commentsCount = previewElem.querySelector('.social__comment-count');
   var commentsLoaded = commentsCount.querySelector('.comments-loaded');
-  var commentsLoadMore = popup.querySelector('.social__comment-loadmore');
+  var commentsLoadMore = previewElem.querySelector('.social__comment-loadmore');
   var commentTemplate = window.data.template.querySelector('.social__comment');
 
   var commentsLast = [];
@@ -48,9 +48,9 @@
   };
 
   var render = function(data) {
-    popup.querySelector('.big-picture__img img').src = data.url;
-    popup.querySelector('.likes-count').textContent = data.likes;
-    popup.querySelector('.comments-count').textContent = data.comments.length;
+    previewElem.querySelector('.big-picture__img img').src = data.url;
+    previewElem.querySelector('.likes-count').textContent = data.likes;
+    previewElem.querySelector('.comments-count').textContent = data.comments.length;
 
     var caption = data.description.trim();
     var captionArr = caption.split(/(#.*)/);
@@ -66,8 +66,8 @@
       description = caption;
     }
 
-    popup.querySelector('.social__description').textContent = description.trim();
-    popup.querySelector('.social__tags').textContent = tags.trim();
+    previewElem.querySelector('.social__description').textContent = description.trim();
+    previewElem.querySelector('.social__tags').textContent = tags.trim();
 
     renderComments(data.comments.slice());
 
@@ -81,27 +81,13 @@
     renderComments();
   });
 
-  var onEscPress = function(evt) {
-    window.util.isEscEvent(evt, close);
-  };
-
-  var close = function() {
-    window.util.hide(popup);
-    window.util.show(commentsCount, true);
-    window.util.show(commentsLoadMore, true);
-
-    document.removeEventListener('keydown', onEscPress);
-  };
-
-  popupClose.addEventListener('click', function() {
-    close();
-  });
-
   window.preview = {
-    open: function(data) {
+    show: function(data) {
       render(data);
-      document.addEventListener('keydown', onEscPress);
-      window.util.show(popup);
+      window.popup.open(SELECTOR, function() {
+        window.util.show(commentsCount, true);
+        window.util.show(commentsLoadMore, true);
+      });
     }
   };
 })();

@@ -6,50 +6,51 @@
 // Зависимости: нет
 
 (function() {
+  var ELEMENT = document.querySelector('.scale');
+
   var Value = {
     MIN: 0,
     MAX: 100,
     DEFAULT: 100
   };
 
-  var scaleElem = document.querySelector('.scale');
-  var scaleLine = scaleElem.querySelector('.scale__line');
-  var scalePin = scaleElem.querySelector('.scale__pin');
-  var scaleLevelElem = scaleElem.querySelector('.scale__level');
-  var scaleValueInput = scaleElem.querySelector('.scale__value');
+  var scale;
+  var line;
+  var pin;
+  var levelElem;
+  var valueInput;
 
-  var calcScaleLevel = function(shift) {
-    var pinLeft = scalePin.offsetLeft + shift;
-    var level = pinLeft / scaleLine.offsetWidth * 100;
+  var calcLevel = function(shift) {
+    var pinLeft = pin.offsetLeft + shift;
+    var level = pinLeft / line.offsetWidth * 100;
     return level;
   };
 
-  var setScaleLevel = function(level) {
+  var setLevel = function(level) {
     var levelCSS = level + '%';
-    scalePin.style.left = levelCSS;
-    scaleLevelElem.style.width = levelCSS;
+    pin.style.left = levelCSS;
+    levelElem.style.width = levelCSS;
   };
 
-  var setScaleValue = function(level) {
+  var setValue = function(level) {
     var value = Math.round(level);
-    scaleValueInput.value = value;
+    valueInput.value = value;
     return value;
   };
 
-  scalePin.addEventListener('mousedown', function(evt) {
+  var onPinMouseDown = function(onChange, evt) {
     var startX = evt.clientX;
 
     var onMouseMove = function(moveEvt) {
       var shift = moveEvt.clientX - startX;
       startX = moveEvt.clientX;
 
-      var scaleLevel = calcScaleLevel(shift);
+      var level = calcLevel(shift);
 
-      if (scaleLevel >= Value.MIN && scaleLevel <= Value.MAX) {
-        setScaleLevel(scaleLevel);
-        scale.onChange(setScaleValue(scaleLevel));
+      if (level >= Value.MIN && level <= Value.MAX) {
+        setLevel(level);
+        onChange(setValue(level));
       }
-
     };
 
     var onMouseUp = function() {
@@ -59,23 +60,34 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  });
-
-  var scale = {
-    show: function() {
-      window.util.show(scaleElem);
-    },
-    hide: function() {
-      window.util.hide(scaleElem);
-    },
-    reset: function() {
-      setScaleValue(Value.DEFAULT);
-      setScaleLevel(Value.DEFAULT);
-    },
-    onChange: function(level) {
-      return level;
-    }
   };
 
-  window.scale = scale;
+  window.scale = {
+    init: function(element, onChange) {
+      scale = element || ELEMENT;
+      line = scale.querySelector('.scale__line');
+      pin = scale.querySelector('.scale__pin');
+      levelElem = scale.querySelector('.scale__level');
+      valueInput = scale.querySelector('.scale__value');
+
+      pin.addEventListener('mousedown', onPinMouseDown.bind(pin, onChange));
+    },
+    show: function(element) {
+      scale = element || ELEMENT;
+      window.util.show(scale);
+    },
+    hide: function(element) {
+      scale = element || ELEMENT;
+      window.util.hide(scale);
+    },
+    reset: function(element) {
+      scale = element || ELEMENT;
+      pin = scale.querySelector('.scale__pin');
+      valueInput = scale.querySelector('.scale__value');
+      levelElem = scale.querySelector('.scale__level');
+
+      setValue(Value.DEFAULT);
+      setLevel(Value.DEFAULT);
+    }
+  };
 })();

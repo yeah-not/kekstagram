@@ -6,17 +6,19 @@
 // Зависимости: нет
 
 (function() {
+  var ELEMENT = document.querySelector('.scale');
+
   var Value = {
     MIN: 0,
     MAX: 100,
     DEFAULT: 100
   };
 
-  var scaleElem = document.querySelector('.scale');
-  var scaleLine = scaleElem.querySelector('.scale__line');
-  var scalePin = scaleElem.querySelector('.scale__pin');
-  var scaleLevelElem = scaleElem.querySelector('.scale__level');
-  var scaleValueInput = scaleElem.querySelector('.scale__value');
+  var scaleElem;
+  var scaleLine;
+  var scalePin;
+  var scaleLevelElem;
+  var scaleValueInput;
 
   var calcScaleLevel = function(shift) {
     var pinLeft = scalePin.offsetLeft + shift;
@@ -36,7 +38,7 @@
     return value;
   };
 
-  scalePin.addEventListener('mousedown', function(evt) {
+  var onPinMouseDown = function(onChange, evt) {
     var startX = evt.clientX;
 
     var onMouseMove = function(moveEvt) {
@@ -47,9 +49,8 @@
 
       if (scaleLevel >= Value.MIN && scaleLevel <= Value.MAX) {
         setScaleLevel(scaleLevel);
-        scale.onChange(setScaleValue(scaleLevel));
+        onChange(setScaleValue(scaleLevel));
       }
-
     };
 
     var onMouseUp = function() {
@@ -59,23 +60,34 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  });
-
-  var scale = {
-    show: function() {
-      window.util.show(scaleElem);
-    },
-    hide: function() {
-      window.util.hide(scaleElem);
-    },
-    reset: function() {
-      setScaleValue(Value.DEFAULT);
-      setScaleLevel(Value.DEFAULT);
-    },
-    onChange: function(level) {
-      return level;
-    }
   };
 
-  window.scale = scale;
+  window.scale = {
+    init: function(element, onChange) {
+      scaleElem = element || ELEMENT;
+      scaleLine = scaleElem.querySelector('.scale__line');
+      scalePin = scaleElem.querySelector('.scale__pin');
+      scaleLevelElem = scaleElem.querySelector('.scale__level');
+      scaleValueInput = scaleElem.querySelector('.scale__value');
+
+      scalePin.addEventListener('mousedown', onPinMouseDown.bind(scalePin, onChange));
+    },
+    show: function(element) {
+      scaleElem = element || ELEMENT;
+      window.util.show(scaleElem);
+    },
+    hide: function(element) {
+      scaleElem = element || ELEMENT;
+      window.util.hide(scaleElem);
+    },
+    reset: function(element) {
+      scaleElem = element || ELEMENT;
+      scalePin = scaleElem.querySelector('.scale__pin');
+      scaleValueInput = scaleElem.querySelector('.scale__value');
+      scaleLevelElem = scaleElem.querySelector('.scale__level');
+
+      setScaleValue(Value.DEFAULT);
+      setScaleLevel(Value.DEFAULT);
+    }
+  };
 })();

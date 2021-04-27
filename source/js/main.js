@@ -5,13 +5,15 @@
 // Зависимости: остальные модули
 
 (function() {
+  var effectScale = document.querySelector('.scale');
+
   window.upload.onOpen = function() {
     window.imageEffect.apply();
   };
 
   window.upload.onClose = function() {
     window.uploadForm.reset();
-    window.scale.reset();
+    window.scale.reset(effectScale);
     window.imageEffect.reset();
     window.imageSize.reset();
   };
@@ -20,19 +22,19 @@
     window.upload.close();
   };
 
-  window.scale.onChange = function(level) {
+  window.scale.init(effectScale, function(level) {
     window.imageEffect.apply(level);
-  };
+  });
 
   window.imageEffect.onSwitch = function() {
-    window.scale.reset();
+    window.scale.reset(effectScale);
   };
 
   window.imageEffect.onApply = function(effect) {
     if (effect === 'none') {
-      window.scale.hide();
+      window.scale.hide(effectScale);
     } else {
-      window.scale.show();
+      window.scale.show(effectScale);
     }
   };
 })();

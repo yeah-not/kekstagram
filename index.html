@@ -2,160 +2,243 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700|Open+Sans&subset=latin,cyrillic">
-  <link rel="stylesheet" href="css/main.min.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/styles.min.css">
+  <link rel="preload" href="fonts/OpenSans-Regular.woff2" as="font" crossorigin>
+  <link rel="preload" href="fonts/OpenSansCondensed-Bold.woff2" as="font" crossorigin>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Кекстаграм</title>
 </head>
+
 <body>
 
-<form class="filters hidden" action="index.html" method="get" autocomplete="off">
-  <input type="radio" id="filter-recommend" class="filters-radio" name="filter" value="recommend" checked>
-  <label for="filter-recommend" class="filters-item">Рекомендуемые</label>
+  <section class="message-panel">
+    <!-- Вывод информационных сообщений  -->
+  </section>
 
-  <input type="radio" id="filter-popular" class="filters-radio" name="filter" value="popular">
-  <label for="filter-popular" class="filters-item">Популярные</label>
+  <main>
 
-  <input type="radio" id="filter-discussed" class="filters-radio" name="filter" value="discussed">
-  <label for="filter-discussed" class="filters-item">Обсуждаемые</label>
+    <section class="img-filters img-filters--inactive container">
+      <h2 class="img-filters__title visually-hidden">Фильтр фотографий</h2>
 
-  <input type="radio" id="filter-random" class="filters-radio" name="filter" value="random">
-  <label for="filter-random" class="filters-item">Случайные</label>
-</form>
+      <form class="img-filters__form" action="index.html" method="get" autocomplete="off">
+        <button type=button class="img-filters__button img-filters__button--active" id="filter-popular">Популярные</button>
+        <button type=button class="img-filters__button" id="filter-new">Новые</button>
+        <button type=button class="img-filters__button" id="filter-discussed">Обсуждаемые</button>
+      </form>
+    </section>
 
-<form class="upload-form" id="upload-select-image" method="post"
-      enctype="multipart/form-data"
-      autocomplete="off">
-  <div class="upload-image">
-    <input type="file" id="upload-file" class="upload-input" name="filename" required>
-    <label class="upload-file upload-control" for="upload-file"></label>
-  </div>
+    <section class="pictures container">
+      <h2 class="pictures__title visually-hidden">Фотографии других пользователей</h2>
 
-  <div class="upload-overlay  hidden">
-    <div class="upload-effect">
-      <div class="upload-effect__container">
-        <fieldset class="upload-resize-controls">
-          <button type="button"
-                  class="upload-resize-control upload-resize-controls-button upload-resize-controls-button-dec">–
-          </button><!--
-          --><input type="text" class="upload-resize-control upload-resize-controls-value" value="55%" readonly title="Image Scale" name="scale"/><!--
-          --><button type="button"
-                  class="upload-resize-control upload-resize-controls-button upload-resize-controls-button-inc">+
-          </button>
-        </fieldset>
+      <section class="img-upload">
+        <div class="img-upload__wrapper">
+          <h2 class="img-upload__title visually-hidden">Загрузка фотографии</h2>
 
-        <div class="upload-form-preview">
-          <div></div>
-          <img src="img/upload-default-image.jpg" class="effect-image-preview">
+          <form class="img-upload__form" id="upload-select-image" action="https://javascript.pages.academy/kekstagram" method="post" enctype="multipart/form-data" autocomplete="off">
+
+            <fieldset class="img-upload__start">
+              <input type="file" id="upload-file" class="img-upload__input visually-hidden" name="filename" accept="image/jpeg,image/png" required>
+              <label for="upload-file" class="img-upload__label img-upload__control">Загрузить</label>
+            </fieldset>
+
+            <div class="img-upload__message img-upload__message--dragndrop hidden">Сюда!</div>
+            <div class="img-upload__message img-upload__message--loading hidden">Загружаем...</div>
+            <div class="img-upload__message img-upload__message--processing hidden">Кексограмим...</div>
+            <div class="img-upload__message img-upload__message--error error hidden">Ошибка загрузки файла
+              <div class="error__links">
+                <a class="error__link" href="#">Попробовать снова</a>
+                <a class="error__link" href="#">Загрузить другой файл</a>
+              </div>
+            </div>
+
+            <div class="img-upload__overlay popup hidden">
+              <div class="img-upload__wrapper">
+                <div class="img-upload__preview-container">
+
+                  <fieldset class="img-upload__resize resize">
+                    <button type="button" class="resize__control resize__control--minus">Уменьшить</button>
+                    <input type="text" class="resize__control resize__control--value" value="100%" title="Image Scale" name="scale" readonly>
+                    <button type="button" class="resize__control resize__control--plus">Увеличить</button>
+                  </fieldset>
+
+                  <div class="img-upload__preview">
+                    <img src="img/upload-default-image.jpg" width="586" height="587" alt="Предварительный просмотр фотографии">
+                  </div>
+
+                  <fieldset class="img-upload__scale scale">
+                    <input type="number" class="scale__value" name="effect-level" value="100">
+                    <div class="scale__line">
+                      <div class="scale__pin" tabindex="0">Кнопка изменения глубины эффекта фотографии</div>
+                      <div class="scale__level">Глубина эффекта фотографии</div>
+                    </div>
+                  </fieldset>
+
+                  <button type="reset" class="img-upload__cancel popup__close" id="upload-cancel">Закрыть</button>
+                </div>
+
+                <fieldset class="img-upload__effects effects">
+                  <ul class="effects__list">
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-none" value="none">
+                      <label for="effect-none" class="effects__label">
+                        <span class="effects__preview effects__preview--none">Превью фото без эффекта</span>
+                        Оригинал
+                      </label>
+                    </li>
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-chrome" value="chrome">
+                      <label for="effect-chrome" class="effects__label">
+                        <span class="effects__preview effects__preview--chrome">Превью эффекта Хром</span>
+                        Хром
+                      </label>
+                    </li>
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-sepia" value="sepia">
+                      <label for="effect-sepia" class="effects__label">
+                        <span class="effects__preview effects__preview--sepia">Превью эффекта Сепия</span>
+                        Сепия
+                      </label>
+                    </li>
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-marvin" value="marvin">
+                      <label for="effect-marvin" class="effects__label">
+                        <span class="effects__preview effects__preview--marvin">Превью эффекта Марвин</span>
+                        Марвин
+                      </label>
+                    </li>
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-phobos" value="phobos">
+                      <label for="effect-phobos" class="effects__label">
+                        <span class="effects__preview effects__preview--phobos">Превью эффекта Фобос</span>
+                        Фобос
+                      </label>
+                    </li>
+                    <li class="effects__item">
+                      <input type="radio" class="effects__radio visually-hidden" name="effect" id="effect-heat" value="heat" checked>
+                      <label for="effect-heat" class="effects__label">
+                        <span class="effects__preview effects__preview--heat">Превью эффекта Зной</span>
+                        Зной
+                      </label>
+                    </li>
+                  </ul>
+                </fieldset>
+
+                <fieldset class="img-upload__text text">
+                  <input class="text__hashtags" name="hashtags" placeholder="#хэш-тег">
+                  <textarea class="text__description" name="description" placeholder="Ваш комментарий..." minlength="20" maxlength="140"></textarea>
+                </fieldset>
+
+                <button type="submit" class="img-upload__submit" id="upload-submit">Опубликовать</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Фотографии других участников (шаблон #picture) -->
+    </section>
+
+    <section class="big-picture popup hidden">
+      <h2 class="big-picture__title visually-hidden">Просмотр фотографии</h2>
+      <div class="big-picture__preview">
+
+        <div class="big-picture__img">
+          <img src="img/logo-background-3.jpg" alt="Девушка в купальнике" width="600" height="600">
         </div>
 
-        <fieldset class="upload-effect-controls">
-          <div class="upload-effect-level">
-            <div class="upload-effect-level-line">
-              <div class="upload-effect-level-pin"></div>
-              <div class="upload-effect-level-val"></div>
+        <div class="big-picture__social social">
+          <div class="social__header">
+            <img class="social__picture" src="img/avatar-1.svg" alt="Аватар автора фотографии" width="35" height="35">
+            <div class="social__caption">
+              <p class="social__description"><!-- Описание фотографии --></p>
+              <p class="social__tags"><!-- Тэги фотографии --></p>
             </div>
+            <p class="social__likes">Нравится <span class="likes-count"><!-- Число --></span></p>
           </div>
-
-          <input type="radio" name="effect" id="upload-effect-none" value="none" checked>
-          <label class="upload-effect-label" for="upload-effect-none">
-            <div class="upload-effect-preview"></div>
-            Оригинал
-          </label>
-
-          <input type="radio" name="effect" id="upload-effect-chrome" value="chrome">
-          <label class="upload-effect-label upload-effect-label-chrome" for="upload-effect-chrome">
-            <div class="upload-effect-preview"></div>
-            Хром
-          </label>
-
-          <input type="radio" name="effect" id="upload-effect-sepia" value="sepia">
-          <label class="upload-effect-label upload-effect-label-sepia" for="upload-effect-sepia">
-            <div class="upload-effect-preview"></div>
-            Сепия
-          </label>
-
-          <input type="radio" name="effect" id="upload-effect-marvin" value="marvin">
-          <label class="upload-effect-label upload-effect-label-marvin" for="upload-effect-marvin">
-            <div class="upload-effect-preview"></div>
-            Марвин
-          </label>
-
-          <input type="radio" name="effect" id="upload-effect-phobos" value="phobos">
-          <label class="upload-effect-label upload-effect-label-phobos" for="upload-effect-phobos">
-            <div class="upload-effect-preview"></div>
-            Фобос
-          </label>
-
-          <input type="radio" name="effect" id="upload-effect-heat" value="heat">
-          <label class="upload-effect-label upload-effect-label-heat" for="upload-effect-heat">
-            <div class="upload-effect-preview"></div>
-            Зной
-          </label>
-        </fieldset>
-
-        <input class="upload-form-hashtags" name="hashtags" placeholder="#хэш-тег">
-
-        <textarea class="upload-form-description" name="description" placeholder="Ваш комментарий..."></textarea>
-
-        <button class="upload-form-cancel" type="reset" id="upload-cancel"></button>
-        <button class="upload-form-submit" type="submit" id="upload-submit">Отправить</button>
+          <ul class="social__comments">
+            <!-- Комментарий (шаблон #social-comment) -->
+          </ul>
+          <div class="social__comment-count"><span class="comments-loaded"><!-- Число --></span> из <span class="comments-count"><!-- Число --></span> комментариев</div>
+          <div class="social__comment-loadmore">Загрузить еще</div>
+          <div class="social__footer">
+            <img class="social__picture" src="img/avatar-6.svg" alt="Аватар комментатора фотографии" width="35" height="35">
+            <input type="text" class="social__footer-text" placeholder="Ваш комментарий...">
+            <button type="button" class="social__footer-btn" name="button">Отправить</button>
+          </div>
+        </div>
+        <button type="reset" class="big-picture__cancel popup__close" id="picture-cancel">Закрыть</button>
       </div>
-    </div>
-  </div>
-
-  <div class="upload-message hidden">
-    <div class="upload-message-container"></div>
-  </div>
-</form>
-
-<div class="pictures container" style="font-size: 12px;">
-</div>
-
-<footer class="footer container">
-  <div class="center-wrapper">
-    <section class="footer-logo">
-      Сделано в <a tabindex="1" href="http://htmlacademy.ru" class="footer-logo-link"><img src="img/ha-logo.png"
-                                                                                           class="footer-logo-image"
-                                                                                           width="130"
-                                                                                           alt="HTML Academy"/>HTML
-      Academy</a> &copy; 2017
     </section>
-    <nav class="footer-social">
-      <a tabindex="1" href="https://twitter.com/htmlacademy_ru" alt="twitter"
-         class="footer-social-item footer-social-item-twitter" target="_blank" rel="nofollow">Twitter</a>
-      <a tabindex="1" href="https://www.instagram.com/htmlacademy/" alt="instagram"
-         class="footer-social-item footer-social-item-instagram" target="_blank" rel="nofollow">Instagtam</a>
-      <a tabindex="1" href="https://www.facebook.com/htmlacademy" alt="facebook"
-         class="footer-social-item footer-social-item-facebook" target="_blank" rel="nofollow">Facebook</a>
-      <a tabindex="1" href="https://vk.com/htmlacademy" alt="vk" class="footer-social-item footer-social-item-vk"
-         target="_blank" rel="nofollow">VK</a>
-    </nav>
-  </div>
-</footer>
 
+  </main>
 
-<div class="gallery-overlay hidden">
-  <span class="gallery-overlay-close">&times;</span>
-  <div class="gallery-overlay-preview">
-    <img src="" class="gallery-overlay-image" alt="">
-    <div class="gallery-overlay-controls">
-      <div class="gallery-overlay-controls-like">Нравится <span class="likes-count">0</span></div>
-      <div class="gallery-overlay-controls-comments"><span class="comments-count">125</span> комментариев</div>
+  <footer class="page-footer container">
+    <div class="page-footer__wrapper">
+      <div class="page-footer__copyright copyright">
+        <a class="copyright__link copyright__link--image" href="https://htmlacademy.ru/intensive/javascript"><img src="img/htmla-logo.svg" width="130" height="45" alt="HTML Academy"></a>
+        <p>Сделано в <a class="copyright__link copyright__link--text" href="https://htmlacademy.ru/intensive/javascript">HTML Academy</a> &copy; 2018</p>
+      </div>
+
+      <ul class="page-footer__contacts contacts">
+        <li>
+          <a href="https://twitter.com/htmlacademy_ru" class="contacts__link contacts__link--twitter">Twitter</a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/htmlacademy/" class="contacts__link contacts__link--instagram">Instagtam</a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/htmlacademy" class="contacts__link contacts__link--facebook">Facebook</a>
+        </li>
+        <li>
+          <a href="https://vk.com/htmlacademy" class="contacts__link contacts__link--vk">VK</a>
+        </li>
+      </ul>
     </div>
-  </div>
-</div>
+  </footer>
 
-<template id="picture-template" style="display: none">
-  <a href="" class="picture">
-    <img src="" width="182" height="182">
-    <span class="picture-stats">
-      <span class="picture-stat picture-comments"></span>
-      <span class="picture-stat picture-likes"></span>
-    </span>
-  </a>
-</template>
+  <template id="main-template">
+    <!-- message-bar -->
+    <div class="message-bar"> <!-- модификаторы: default|error|success -->
+      <p class="message-bar__content">
+        <strong class="message-bar__label"><!-- Метка --></strong>
+        <span class="message-bar__text"><!-- Текст сообщения --></span>
+      </p>
+    </div>
+    <!-- picture__link -->
+    <a href="#" class="picture__link">
+      <img class="picture__img" src="" width="182" height="182" alt="Случайная фотография">
+      <p class="picture__stats">
+        <span class="picture__stat picture__stat--comments"></span>
+        <span class="picture__stat picture__stat--likes"></span>
+      </p>
+    </a>
+    <!-- social__comment -->
+    <li class="social__comment social__comment--text">
+      <img class="social__picture" src="img/avatar-1.svg" alt="Аватар комментатора фотографии" width="35" height="35">
+      <p>
+        <span class="social__text"><!-- Текст комментария --></span> &ndash;
+        <em class="social__author"><!-- Автор комментария --></em>
+      </p>
+    </li>
+  </template>
 
+  <script src="js/util.min.js"></script>
+  <script src="js/data.min.js"></script>
+  <script src="js/debounce.min.js"></script>
+  <script src="js/message.min.js"></script>
+  <script src="js/backend.min.js"></script>
+  <script src="js/popup.min.js"></script>
+  <script src="js/scale.min.js"></script>
+
+  <script src="js/image-size.min.js"></script>
+  <script src="js/image-effect.min.js"></script>
+  <script src="js/preview.min.js"></script>
+  <script src="js/upload-form.min.js"></script>
+  <script src="js/upload.min.js"></script>
+  <script src="js/picture.min.js"></script>
+  <script src="js/gallery.min.js"></script>
+
+  <script src="js/main.min.js"></script>
 </body>
 </html>

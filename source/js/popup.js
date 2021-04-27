@@ -6,34 +6,43 @@
 // Зависимости: util
 
 (function() {
-  var popupElem;
+  var ELEMENT = document.querySelector('.popup');
+
+  var popup;
   var popupClose;
+  var onClose;
+  var onOpen;
 
   var onEscPress = function(evt) {
     window.util.isEscEvent(evt, close);
   };
 
-  var close = function(onClose) {
-    window.util.hide(popupElem);
+  var onPopupCloseClick = function() {
+    close();
+  };
+
+  var close = function() {
+    window.util.hide(popup);
+
     document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('click', onPopupCloseClick);
+
     onClose();
   };
 
   window.popup = {
-    open: function(selector, onClose, onOpen) {
-      popupElem = document.querySelector(selector || '.popup');
-      popupClose = popupElem.querySelector('.popup__close');
+    open: function(element, onCloseCB, onOpenCB) {
+      popup = element || ELEMENT;
+      popupClose = popup.querySelector('.popup__close');
 
-      onClose = onClose || function() {};
-      onOpen = onOpen || function() {};
+      onClose = onCloseCB || function() {};
+      onOpen = onOpenCB || function() {};
 
       document.addEventListener('keydown', onEscPress);
-      popupClose.addEventListener('click', function() {
-        close(onClose);
-      });
+      popupClose.addEventListener('click', onPopupCloseClick);
 
       onOpen();
-      window.util.show(popupElem);
+      window.util.show(popup);
     }
   };
 })();

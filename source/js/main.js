@@ -7,21 +7,6 @@
 (function() {
   var effectScale = document.querySelector('.scale');
 
-  window.upload.onOpen = function() {
-    window.imageEffect.apply();
-  };
-
-  window.upload.onClose = function() {
-    window.uploadForm.reset();
-    window.scale.reset(effectScale);
-    window.imageEffect.reset();
-    window.imageSize.reset();
-  };
-
-  window.uploadForm.onSend = function() {
-    window.upload.close();
-  };
-
   window.scale.init(effectScale, function(level) {
     window.imageEffect.apply(level);
   });
@@ -36,5 +21,20 @@
     } else {
       window.scale.show(effectScale);
     }
+  };
+
+  window.upload.onOpen = function() {
+    window.imageEffect.apply();
+  };
+
+  window.upload.onClose = function() {
+    window.uploadForm.reset();
+    window.scale.reset(effectScale);
+    window.imageEffect.reset();
+    window.imageSize.reset();
+  };
+
+  window.uploadForm.onSend = function() {
+    window.upload.close();
   };
 })();

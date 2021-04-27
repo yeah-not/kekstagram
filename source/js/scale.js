@@ -14,27 +14,27 @@
     DEFAULT: 100
   };
 
-  var scaleElem;
-  var scaleLine;
-  var scalePin;
-  var scaleLevelElem;
-  var scaleValueInput;
+  var scale;
+  var line;
+  var pin;
+  var levelElem;
+  var valueInput;
 
-  var calcScaleLevel = function(shift) {
-    var pinLeft = scalePin.offsetLeft + shift;
-    var level = pinLeft / scaleLine.offsetWidth * 100;
+  var calcLevel = function(shift) {
+    var pinLeft = pin.offsetLeft + shift;
+    var level = pinLeft / line.offsetWidth * 100;
     return level;
   };
 
-  var setScaleLevel = function(level) {
+  var setLevel = function(level) {
     var levelCSS = level + '%';
-    scalePin.style.left = levelCSS;
-    scaleLevelElem.style.width = levelCSS;
+    pin.style.left = levelCSS;
+    levelElem.style.width = levelCSS;
   };
 
-  var setScaleValue = function(level) {
+  var setValue = function(level) {
     var value = Math.round(level);
-    scaleValueInput.value = value;
+    valueInput.value = value;
     return value;
   };
 
@@ -45,11 +45,11 @@
       var shift = moveEvt.clientX - startX;
       startX = moveEvt.clientX;
 
-      var scaleLevel = calcScaleLevel(shift);
+      var level = calcLevel(shift);
 
-      if (scaleLevel >= Value.MIN && scaleLevel <= Value.MAX) {
-        setScaleLevel(scaleLevel);
-        onChange(setScaleValue(scaleLevel));
+      if (level >= Value.MIN && level <= Value.MAX) {
+        setLevel(level);
+        onChange(setValue(level));
       }
     };
 
@@ -64,30 +64,30 @@
 
   window.scale = {
     init: function(element, onChange) {
-      scaleElem = element || ELEMENT;
-      scaleLine = scaleElem.querySelector('.scale__line');
-      scalePin = scaleElem.querySelector('.scale__pin');
-      scaleLevelElem = scaleElem.querySelector('.scale__level');
-      scaleValueInput = scaleElem.querySelector('.scale__value');
+      scale = element || ELEMENT;
+      line = scale.querySelector('.scale__line');
+      pin = scale.querySelector('.scale__pin');
+      levelElem = scale.querySelector('.scale__level');
+      valueInput = scale.querySelector('.scale__value');
 
-      scalePin.addEventListener('mousedown', onPinMouseDown.bind(scalePin, onChange));
+      pin.addEventListener('mousedown', onPinMouseDown.bind(pin, onChange));
     },
     show: function(element) {
-      scaleElem = element || ELEMENT;
-      window.util.show(scaleElem);
+      scale = element || ELEMENT;
+      window.util.show(scale);
     },
     hide: function(element) {
-      scaleElem = element || ELEMENT;
-      window.util.hide(scaleElem);
+      scale = element || ELEMENT;
+      window.util.hide(scale);
     },
     reset: function(element) {
-      scaleElem = element || ELEMENT;
-      scalePin = scaleElem.querySelector('.scale__pin');
-      scaleValueInput = scaleElem.querySelector('.scale__value');
-      scaleLevelElem = scaleElem.querySelector('.scale__level');
+      scale = element || ELEMENT;
+      pin = scale.querySelector('.scale__pin');
+      valueInput = scale.querySelector('.scale__value');
+      levelElem = scale.querySelector('.scale__level');
 
-      setScaleValue(Value.DEFAULT);
-      setScaleLevel(Value.DEFAULT);
+      setValue(Value.DEFAULT);
+      setLevel(Value.DEFAULT);
     }
   };
 })();

@@ -6,11 +6,10 @@
 // Зависимости: message, popup
 
 (function() {
-  var SELECTOR = '.img-upload__overlay';
   var FILE_TYPES = ['image/jpeg', 'image/png'];
   var ERROR_MISS_TYPE = 'Поддерживаются форматы JPG и PNG';
 
-  var uploadElem = document.querySelector(SELECTOR);
+  var uploadElem = document.querySelector('.img-upload__overlay');
   var image = uploadElem.querySelector('.img-upload__preview img');
   var fileChooser = document.querySelector('#upload-file');
 
@@ -26,7 +25,7 @@
 
       reader.addEventListener('load', function() {
         image.src = reader.result;
-        window.popup.open(SELECTOR, upload.onClose, upload.onOpen);
+        window.popup.open(uploadElem, upload.onClose, upload.onOpen);
       });
 
       reader.readAsDataURL(file);

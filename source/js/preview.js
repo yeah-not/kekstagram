@@ -8,11 +8,11 @@
 (function() {
   var COMMENTS_PER_PAGE = 5;
 
-  var preview = document.querySelector('.big-picture');
-  var commentsList = preview.querySelector('.social__comments');
-  var commentsCount = preview.querySelector('.social__comment-count');
+  var preview = new window.Popup('.big-picture');
+  var commentsList = preview.el.querySelector('.social__comments');
+  var commentsCount = preview.el.querySelector('.social__comment-count');
   var commentsLoaded = commentsCount.querySelector('.comments-loaded');
-  var commentsLoadMore = preview.querySelector('.social__comment-loadmore');
+  var commentsLoadMore = preview.el.querySelector('.social__comment-loadmore');
   var commentTemplate = window.data.template.querySelector('.social__comment');
 
   var commentsLast = [];
@@ -47,9 +47,9 @@
   };
 
   var render = function(data) {
-    preview.querySelector('.big-picture__img img').src = data.url;
-    preview.querySelector('.likes-count').textContent = data.likes;
-    preview.querySelector('.comments-count').textContent = data.comments.length;
+    preview.el.querySelector('.big-picture__img img').src = data.url;
+    preview.el.querySelector('.likes-count').textContent = data.likes;
+    preview.el.querySelector('.comments-count').textContent = data.comments.length;
 
     var caption = data.description.trim();
     var captionArr = caption.split(/(#.*)/);
@@ -65,8 +65,8 @@
       description = caption;
     }
 
-    preview.querySelector('.social__description').textContent = description.trim();
-    preview.querySelector('.social__tags').textContent = tags.trim();
+    preview.el.querySelector('.social__description').textContent = description.trim();
+    preview.el.querySelector('.social__tags').textContent = tags.trim();
 
     renderComments(data.comments.slice());
 
@@ -80,13 +80,24 @@
     renderComments();
   });
 
+  preview.onClose = function() {
+    window.util.show(commentsCount, true);
+    window.util.show(commentsLoadMore, true);
+  };
+
+  // Вариант 1 - доступ только к внешним функциям
   window.preview = {
     show: function(data) {
       render(data);
-      window.popup.open(preview, function() {
-        window.util.show(commentsCount, true);
-        window.util.show(commentsLoadMore, true);
-      });
+      preview.open();
     }
   };
+
+  // Вариант 2 - доступ ко всему попапу
+  // preview.show = function(data) {
+  //   render(data);
+  //   this.open();
+  // };
+  //
+  // window.preview = preview;
 })();

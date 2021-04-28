@@ -5,21 +5,21 @@
 // Зависимости: остальные модули
 
 (function() {
-  var effectScale = document.querySelector('.scale');
+  var effectScale = new window.Scale('.img-upload__scale');
 
-  window.scale.init(effectScale, function(level) {
+  effectScale.onChange = function(level) {
     window.imageEffect.apply(level);
-  });
+  };
 
   window.imageEffect.onSwitch = function() {
-    window.scale.reset(effectScale);
+    effectScale.reset();
   };
 
   window.imageEffect.onApply = function(effect) {
     if (effect === 'none') {
-      window.scale.hide(effectScale);
+      effectScale.hide();
     } else {
-      window.scale.show(effectScale);
+      effectScale.show();
     }
   };
 
@@ -29,7 +29,7 @@
 
   window.upload.onClose = function() {
     window.uploadForm.reset();
-    window.scale.reset(effectScale);
+    effectScale.reset();
     window.imageEffect.reset();
     window.imageSize.reset();
   };

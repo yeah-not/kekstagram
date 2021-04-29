@@ -46,12 +46,12 @@
     }
   };
 
-  var render = function(data) {
-    preview.el.querySelector('.big-picture__img img').src = data.url;
-    preview.el.querySelector('.likes-count').textContent = data.likes;
-    preview.el.querySelector('.comments-count').textContent = data.comments.length;
+  var render = function(picture) {
+    preview.el.querySelector('.big-picture__img img').src = picture.image;
+    preview.el.querySelector('.likes-count').textContent = picture.likesNum;
+    preview.el.querySelector('.comments-count').textContent = picture.commentsNum;
 
-    var caption = data.description.trim();
+    var caption = picture.description.trim();
     var captionArr = caption.split(/(#.*)/);
     var description = '';
     var tags = '';
@@ -68,9 +68,9 @@
     preview.el.querySelector('.social__description').textContent = description.trim();
     preview.el.querySelector('.social__tags').textContent = tags.trim();
 
-    renderComments(data.comments.slice());
+    renderComments(picture.comments.slice());
 
-    if (data.comments.length < COMMENTS_PER_PAGE) {
+    if (picture.commentsNum < COMMENTS_PER_PAGE) {
       window.util.hide(commentsCount, true);
       window.util.hide(commentsLoadMore, true);
     }
@@ -87,8 +87,8 @@
 
   // Вариант 1 - доступ только к внешним функциям
   window.preview = {
-    show: function(data) {
-      render(data);
+    show: function(picture) {
+      render(picture);
       preview.open();
     }
   };

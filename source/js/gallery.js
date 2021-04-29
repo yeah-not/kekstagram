@@ -9,35 +9,37 @@
   var ERROR_LOAD = 'Изображения не загружены.';
   var NEW_AMOUNT = 10;
 
-  var pictures = document.querySelector('.pictures');
-  var picturesData = [];
+  var picturesEl = document.querySelector('.pictures');
+  var pictureSelector = '.picture__link';
+  var picturesAll = [];
 
-  var render = function(data) {
-    data = data || picturesData;
+  var render = function(pictures) {
+    pictures = pictures || picturesAll;
 
-    var pictureClickHandler = function(picture, pictureData) {
-      picture.addEventListener('click', function() {
-        window.preview.show(pictureData);
+    window.util.removeChildren(picturesEl, pictureSelector);
+
+    var pictureClickHandler = function(pictureEl, picture) {
+      pictureEl.addEventListener('click', function() {
+        window.preview.show(picture);
       });
     };
 
-    window.util.removeChildren(pictures, window.picture.selector);
-    pictures.appendChild(window.util.renderFragment(data, window.picture.render, pictureClickHandler));
+    picturesEl.appendChild(window.util.renderObjects(pictures, pictureClickHandler));
   };
 
   var renderNew = function() {
-    var picturesDataRandom = window.util.shuffle(picturesData.slice());
-    render(picturesDataRandom.slice(0, NEW_AMOUNT));
+    var picturesRandom = window.util.shuffle(picturesAll.slice());
+    render(picturesRandom.slice(0, NEW_AMOUNT));
   };
 
   var renderDiscussed = function() {
-    var picturesDataSorted = picturesData
+    var picturesSorted = picturesAll
       .slice()
       .sort(function(a, b) {
         return b.comments.length - a.comments.length;
       });
 
-    render(picturesDataSorted);
+    render(picturesSorted);
   };
 
   var filters = document.querySelector('.img-filters');
@@ -71,7 +73,9 @@
   };
 
   var onLoad = function(data) {
-    picturesData = data;
+    picturesAll = data.map(function(it) {
+      return new window.Picture(it);
+    });
     render();
     showFilters();
   };

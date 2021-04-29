@@ -10,6 +10,21 @@
   var ERROR_MISS_TYPE = 'Поддерживаются форматы JPG и PNG';
 
   var upload = new window.Popup('.img-upload__overlay');
+
+  upload.onOpen = function() {
+    window.imageEffect.apply();
+  };
+
+  upload.onClose = function() {
+    window.uploadForm.reset();
+    window.imageEffect.reset();
+    window.imageSize.reset();
+  };
+
+  window.uploadForm.onSend = function() {
+    upload.close();
+  };
+
   var image = upload.el.querySelector('.img-upload__preview img');
   var fileChooser = document.querySelector('#upload-file');
 

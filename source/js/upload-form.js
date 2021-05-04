@@ -41,8 +41,6 @@
       errorMsg = Error.TAG_TOO_LONG;
     } else if (tagCloneIndex > 0) {
       errorMsg = Error.TAG_NOT_UNIQUE;
-    } else {
-      errorMsg = '';
     }
 
     return errorMsg;
@@ -77,13 +75,15 @@
   var commentInput = form.querySelector('.text__description');
 
   var validateCommentInput = function() {
+    var customValidity = '';
+
     if (commentInput.validity.tooShort) {
-      commentInput.setCustomValidity(Error.COMMENT_TOO_SHORT);
+      customValidity = Error.COMMENT_TOO_SHORT;
     } else if (commentInput.validity.tooLong) {
-      commentInput.setCustomValidity(Error.COMMENT_TOO_LONG);
-    } else {
-      commentInput.setCustomValidity('');
+      customValidity = Error.COMMENT_TOO_LONG;
     }
+
+    commentInput.setCustomValidity(customValidity);
   };
 
   commentInput.addEventListener('invalid', function() {

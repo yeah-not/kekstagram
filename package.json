@@ -20,7 +20,7 @@
     "start": "gulp build --dev && gulp watch"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.13",
+    "browser-sync": "^2.26.14",
     "del": "^6.0.0",
     "eslint": "^7.16.0",
     "eslint-config-htmlacademy": "^0.6.0",
@@ -28,9 +28,11 @@
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-if": "^3.0.0",
     "gulp-plumber": "^1.2.1",
     "gulp-rename": "^2.0.0",
-    "gulp-terser": "^2.0.0"
+    "gulp-terser": "^2.0.0",
+    "gulp-uglify": "^3.0.2"
   }
 }

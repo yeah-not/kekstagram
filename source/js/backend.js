@@ -38,11 +38,12 @@
     xhr.timeout = timeout || xhr.timeout;
 
     xhr.addEventListener('load', function() {
-      if (xhr.status === CODE_SUCCESS) {
-        onLoad(xhr.response);
-      } else {
+      if (xhr.status !== CODE_SUCCESS) {
         onError(xhr.status + ' ' + (codeToMessage[xhr.status] || codeToMessage.default + ': ' + xhr.statusText));
+        return;
       }
+
+      onLoad(xhr.response);
     });
 
     xhr.addEventListener('error', function() {
@@ -52,7 +53,6 @@
     xhr.addEventListener('timeout', function() {
       onError(Error.TIMEOUT + xhr.timeout + Error.TIMEOUT_PAST);
     });
-
     xhr.open(method, url);
     xhr.send();
   };

@@ -8,7 +8,9 @@ const gulpif = require('gulp-if');
 
 const ghpages = require('gh-pages');
 const browserSync = require('browser-sync').create();
+
 const concat = require('gulp-concat');
+const htmlmin = require('gulp-htmlmin');
 const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify');
 
@@ -22,6 +24,7 @@ function clean() {
 
 function html() {
   return src('source/*.html')
+    .pipe(gulpif(!isDev, htmlmin({collapseWhitespace: true, removeComments: true})))
     .pipe(dest('build'))
     .pipe(browserSync.stream());
 }

@@ -10,7 +10,7 @@ const ghpages = require('gh-pages');
 const browserSync = require('browser-sync').create();
 const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
-const terser = require('gulp-terser');
+const uglify = require('gulp-uglify');
 
 const isDev = (process.argv.indexOf('--dev') !== -1);
 
@@ -37,25 +37,46 @@ function styles() {
     .pipe(browserSync.stream());
 }
 
-function scripts() {
-  return src('source/js/**/*.js', {sourcemaps: false})
-    .pipe(gulpif(isDev, dest('build/js')))
-    .pipe(plumber())
-    // .pipe(terser())
-    .pipe(rename({suffix: '.min'}))
-    .pipe(dest('build/js', {sourcemaps: false}))
-    .pipe(browserSync.stream());
-}
-//
 // function scripts() {
-//   return src('source/js/**/*.js', {sourcemaps: isDev})
+//   return src('source/js/**/*.js', {sourcemaps: false})
 //     .pipe(gulpif(isDev, dest('build/js')))
 //     .pipe(plumber())
-//     .pipe(terser())
+//     .pipe(uglify({
+//       output: {wrap_iife: true}
+//     }))
+//     .pipe(concat('script.js'))
 //     .pipe(rename({suffix: '.min'}))
-//     .pipe(dest('build/js', {sourcemaps: isDev}))
+//     .pipe(dest('build/js', {sourcemaps: false}))
 //     .pipe(browserSync.stream());
 // }
+
+function scripts() {
+  return src([
+    'source/js/util.js',
+    'source/js/data.js',
+    'source/js/debounce.js',
+    'source/js/message.js',
+    'source/js/backend.js',
+    'source/js/popup.js',
+    'source/js/scale.js',
+    'source/js/image-size.js',
+    'source/js/image-effect.js',
+    'source/js/upload-form.js',
+    'source/js/upload.js',
+    'source/js/picture.js',
+    'source/js/preview.js',
+    'source/js/gallery.js',
+  ], {sourcemaps: isDev})
+    .pipe(gulpif(isDev, dest('build/js')))
+    .pipe(plumber())
+    .pipe(uglify({
+      output: {wrap_iife: true}
+    }))
+    .pipe(concat('script.js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(dest('build/js', {sourcemaps: isDev}))
+    .pipe(browserSync.stream());
+}
 
 function images() {
   return src([

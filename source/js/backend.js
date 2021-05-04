@@ -53,7 +53,6 @@
     xhr.addEventListener('timeout', function() {
       onError(Error.TIMEOUT + xhr.timeout + Error.TIMEOUT_PAST);
     });
-
     xhr.open(method, url);
     xhr.send();
   };

@@ -38,11 +38,12 @@
     xhr.timeout = timeout || xhr.timeout;
 
     xhr.addEventListener('load', function() {
-      if (xhr.status === CODE_SUCCESS) {
-        onLoad(xhr.response);
-      } else {
+      if (xhr.status !== CODE_SUCCESS) {
         onError(xhr.status + ' ' + (codeToMessage[xhr.status] || codeToMessage.default + ': ' + xhr.statusText));
+        return;
       }
+
+      onLoad(xhr.response);
     });
 
     xhr.addEventListener('error', function() {

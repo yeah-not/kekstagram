@@ -32,15 +32,30 @@
         element.removeChild(element.querySelector(childSelector));
       }
     },
-    renderFragment: function(data, renderItem, itemHandler) {
-      var fragment = data.reduce(function(accumlator, itemData) {
-        var item = renderItem(itemData);
+    renderFragment: function(data, renderEl, handler) {
+      var fragment = data.reduce(function(accumlator, elData) {
+        var el = renderEl(elData);
 
-        if (itemHandler) {
-          itemHandler(item, itemData);
+        if (handler) {
+          handler(el, elData);
         }
 
-        accumlator.appendChild(item);
+        accumlator.appendChild(el);
+
+        return accumlator;
+      }, document.createDocumentFragment());
+
+      return fragment;
+    },
+    renderObjects: function(objects, handler) {
+      var fragment = objects.reduce(function(accumlator, obj) {
+        var el = obj.render();
+
+        if (handler) {
+          handler(el, obj);
+        }
+
+        accumlator.appendChild(el);
 
         return accumlator;
       }, document.createDocumentFragment());

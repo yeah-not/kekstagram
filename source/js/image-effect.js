@@ -3,7 +3,7 @@
 // --------------
 // Наложение эффекта на изображение
 // --------------
-// Зависимости: нет
+// Зависимости: scale
 
 (function() {
   var EFFECT_DEFAULT = 'heat';
@@ -31,27 +31,39 @@
 
     image.style.filter = effectToFilter[effect] || '';
     currentEffect = effect;
-
-    imageEffect.onApply(effect);
   };
 
-  var effectControls = document.querySelector('.effects');
+  var scale = new window.Scale('.img-upload__scale');
 
-  effectControls.addEventListener('change', function(evt) {
-    apply(EFFECT_LEVEL_DEFAULT, evt.target.value);
-    imageEffect.onSwitch();
+  scale.onUpdate = function(level) {
+    apply(level);
+  };
+
+  var controls = document.querySelector('.effects');
+
+  controls.addEventListener('change', function(evt) {
+    var effect = evt.target.value;
+
+    apply(EFFECT_LEVEL_DEFAULT, effect);
+
+    scale.reset();
+
+    if (effect === 'none') {
+      scale.hide();
+    } else {
+      scale.show();
+    }
   });
 
-  var imageEffect = {
+  window.imageEffect = {
     apply: apply,
     reset: function() {
+      image.classList.remove('effects__preview--' + currentEffect);
+      image.style.filter = '';
       currentEffect = '';
-    },
-    onSwitch: function() {},
-    onApply: function(effect) {
-      return effect;
+
+      scale.reset();
+      scale.show();
     }
   };
-
-  window.imageEffect = imageEffect;
 })();

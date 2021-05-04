@@ -5,44 +5,34 @@
 // --------------
 // Зависимости: util
 
-(function() {
-  var ELEMENT = document.querySelector('.popup');
+var Popup = function(selector) {
+  this.el = document.querySelector(selector || this.DEFAULT_SELECTOR);
+  this.elClose = this.el.querySelector('.popup__close');
+};
 
-  var popup;
-  var popupClose;
-  var onClose;
-  var onOpen;
+Popup.prototype = {
+  DEFAULT_SELECTOR: '.popup',
+  open: function() {
+    this.elClose.addEventListener('click', this._onPopupCloseClick.bind(this));
+    document.addEventListener('keydown', this._onEscPress.bind(this));
 
-  var onEscPress = function(evt) {
-    window.util.isEscEvent(evt, close);
-  };
+    this.onOpen();
+    window.util.show(this.el);
+  },
+  close: function() {
+    window.util.hide(this.el);
 
-  var onPopupCloseClick = function() {
-    close();
-  };
+    this.elClose.removeEventListener('click', this._onPopupCloseClick);
+    document.removeEventListener('keydown', this._onEscPress);
 
-  var close = function() {
-    window.util.hide(popup);
-
-    document.removeEventListener('keydown', onEscPress);
-    document.removeEventListener('click', onPopupCloseClick);
-
-    onClose();
-  };
-
-  window.popup = {
-    open: function(element, onCloseCB, onOpenCB) {
-      popup = element || ELEMENT;
-      popupClose = popup.querySelector('.popup__close');
-
-      onClose = onCloseCB || function() {};
-      onOpen = onOpenCB || function() {};
-
-      document.addEventListener('keydown', onEscPress);
-      popupClose.addEventListener('click', onPopupCloseClick);
-
-      onOpen();
-      window.util.show(popup);
-    }
-  };
-})();
+    this.onClose();
+  },
+  onOpen: function() {},
+  onClose: function() {},
+  _onPopupCloseClick: function() {
+    this.close();
+  },
+  _onEscPress: function(evt) {
+    window.util.isEscEvent(evt, this.close);
+  },
+};

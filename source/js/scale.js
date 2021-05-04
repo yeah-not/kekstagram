@@ -5,51 +5,71 @@
 // --------------
 // Зависимости: нет
 
-(function() {
-  var ELEMENT = document.querySelector('.scale');
+var Scale = function(selector, value) {
+  this.value = value || this.Value.DEFAULT;
 
-  var Value = {
+  this.el = document.querySelector(selector || this.DEFAULT_SELECTOR);
+  this.elLine = this.el.querySelector('.scale__line');
+  this.elPin = this.el.querySelector('.scale__pin');
+  this.elLevel = this.el.querySelector('.scale__level');
+  this.elValue = this.el.querySelector('.scale__value');
+
+  this.elPin.addEventListener('mousedown', this._onPinMouseDown.bind(this));
+};
+
+Scale.prototype = {
+  DEFAULT_SELECTOR: '.scale',
+  Value: {
     MIN: 0,
     MAX: 100,
     DEFAULT: 100
-  };
+  },
+  update: function(level, noCallBack) {
+    this._updateLevel(level);
+    this._setValue(level);
+    this.elValue.value = this.value;
 
-  var scale;
-  var line;
-  var pin;
-  var levelElem;
-  var valueInput;
-
-  var calcLevel = function(shift) {
-    var pinLeft = pin.offsetLeft + shift;
-    var level = pinLeft / line.offsetWidth * 100;
-    return level;
-  };
-
-  var setLevel = function(level) {
-    var levelCSS = level + '%';
-    pin.style.left = levelCSS;
-    levelElem.style.width = levelCSS;
-  };
-
-  var setValue = function(level) {
-    var value = Math.round(level);
-    valueInput.value = value;
+    if (!noCallBack) {
+      this.onUpdate(this.value);
+    }
+  },
+  reset: function() {
+    this.update(this.Value.DEFAULT, true);
+  },
+  show: function() {
+    window.util.show(this.el);
+  },
+  hide: function() {
+    window.util.hide(this.el);
+  },
+  onUpdate: function(value) {
     return value;
-  };
-
-  var onPinMouseDown = function(onChange, evt) {
+  },
+  _calcLevel: function(shift) {
+    var pinLeft = this.elPin.offsetLeft + shift;
+    var level = pinLeft / this.elLine.offsetWidth * 100;
+    return level;
+  },
+  _updateLevel: function(level) {
+    var levelCSS = level + '%';
+    this.elPin.style.left = levelCSS;
+    this.elLevel.style.width = levelCSS;
+  },
+  _setValue: function(level) {
+    this.value = Math.round(level);
+  },
+  _onPinMouseDown: function(evt) {
+    var self = this;
     var startX = evt.clientX;
 
     var onMouseMove = function(moveEvt) {
       var shift = moveEvt.clientX - startX;
       startX = moveEvt.clientX;
 
-      var level = calcLevel(shift);
+      var level = self._calcLevel(shift);
 
-      if (level >= Value.MIN && level <= Value.MAX) {
-        setLevel(level);
-        onChange(setValue(level));
+      if (level >= self.Value.MIN && level <= self.Value.MAX) {
+        self.update(level);
       }
     };
 
@@ -60,34 +80,5 @@
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  };
-
-  window.scale = {
-    init: function(element, onChange) {
-      scale = element || ELEMENT;
-      line = scale.querySelector('.scale__line');
-      pin = scale.querySelector('.scale__pin');
-      levelElem = scale.querySelector('.scale__level');
-      valueInput = scale.querySelector('.scale__value');
-
-      pin.addEventListener('mousedown', onPinMouseDown.bind(pin, onChange));
-    },
-    show: function(element) {
-      scale = element || ELEMENT;
-      window.util.show(scale);
-    },
-    hide: function(element) {
-      scale = element || ELEMENT;
-      window.util.hide(scale);
-    },
-    reset: function(element) {
-      scale = element || ELEMENT;
-      pin = scale.querySelector('.scale__pin');
-      valueInput = scale.querySelector('.scale__value');
-      levelElem = scale.querySelector('.scale__level');
-
-      setValue(Value.DEFAULT);
-      setLevel(Value.DEFAULT);
-    }
-  };
-})();
+  }
+};
